@@ -227,96 +227,99 @@ Output: {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-12 sm:py-16">
-        <div className="text-center mb-12 sm:mb-16">
-          <h1 className="text-5xl sm:text-6xl font-light text-gray-900 mb-3 tracking-tight">
-            SyncScript
-          </h1>
-          <p className="text-gray-500 text-sm sm:text-base font-light mt-2">
-            Transform raw notes into structured insights
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Input Section */}
-          <div className="space-y-6">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/90 to-gray-50/90 backdrop-blur-2xl rounded-3xl border border-gray-200/80 shadow-xl"></div>
-              <div className="relative p-6 sm:p-8">
-                <label className="block text-xs font-semibold text-gray-500 mb-4 uppercase tracking-wider">
-                  Raw Notes
-                </label>
-                <textarea
-                  value={rawNotes}
-                  onChange={(e) => setRawNotes(e.target.value)}
-                  placeholder="Paste your meeting notes, brainstorming ideas, or discussion points here..."
-                  className="w-full h-[500px] px-5 py-4 bg-white/80 backdrop-blur-sm border border-gray-200/70 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 outline-none resize-none text-gray-800 placeholder-gray-400/70 text-[15px] leading-relaxed transition-all font-light"
-                />
-              </div>
-            </div>
-
-            <button
-              onClick={handleGenerate}
-              disabled={isLoading || !rawNotes.trim()}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3.5 px-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:shadow-none disabled:translate-y-0 text-base"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Processing...
-                </span>
-              ) : (
-                'Generate'
-              )}
-            </button>
-
-            {error && (
-              <div className="p-4 bg-red-50/80 border border-red-200/70 rounded-xl text-red-600 text-sm backdrop-blur-sm">
-                {error}
-              </div>
-            )}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
+      <div className="flex-1">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 py-12 sm:py-16">
+          <div className="text-center mb-12 sm:mb-16">
+            <h1 className="text-5xl sm:text-6xl font-light text-gray-900 mb-3 tracking-tight">
+              SyncScripts
+            </h1>
+            <p className="text-gray-500 text-sm sm:text-base font-light mt-2">
+              Transform raw notes into structured insights
+            </p>
           </div>
 
-          {/* Output Section */}
-          <div className="space-y-5">
-            {processedNotes && (
-              <div className="mb-4 flex justify-end">
-                <button
-                  onClick={handleDownloadPDF}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Download PDF
-                </button>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Input Section */}
+            <div className="space-y-6">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/90 to-gray-50/90 backdrop-blur-2xl rounded-3xl border border-gray-200/80 shadow-xl"></div>
+                <div className="relative p-6 sm:p-8">
+                  <label className="block text-xs font-semibold text-gray-500 mb-4 uppercase tracking-wider">
+                    Raw Notes
+                  </label>
+                  <textarea
+                    value={rawNotes}
+                    onChange={(e) => setRawNotes(e.target.value)}
+                    placeholder="Paste your meeting notes, brainstorming ideas, or discussion points here..."
+                    className="w-full h-[500px] px-5 py-4 bg-white/80 backdrop-blur-sm border border-gray-200/70 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 outline-none resize-none text-gray-800 placeholder-gray-400/70 text-[15px] leading-relaxed transition-all font-light"
+                  />
+                </div>
               </div>
-            )}
-            
-            <OutputCard
-              title="Executive Summary"
-              content={processedNotes?.executiveSummary}
-              type="text"
-            />
 
-            <OutputCard
-              title="Action Items"
-              content={processedNotes?.actionItems}
-              type="list"
-            />
+              <button
+                onClick={handleGenerate}
+                disabled={isLoading || !rawNotes.trim()}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3.5 px-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:shadow-none disabled:translate-y-0 text-base"
+              >
+                {isLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  'Generate'
+                )}
+              </button>
 
-            <OutputCard
-              title="Technical Tasks"
-              content={processedNotes?.technicalTasks}
-              type="list"
-            />
+              {error && (
+                <div className="p-4 bg-red-50/80 border border-red-200/70 rounded-xl text-red-600 text-sm backdrop-blur-sm">
+                  {error}
+                </div>
+              )}
+            </div>
+
+            {/* Output Section */}
+            <div className="space-y-5">
+              {processedNotes && (
+                <div className="mb-4 flex justify-end">
+                  <button
+                    onClick={handleDownloadPDF}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download PDF
+                  </button>
+                </div>
+              )}
+              
+              <OutputCard
+                title="Executive Summary"
+                content={processedNotes?.executiveSummary}
+                type="text"
+              />
+
+              <OutputCard
+                title="Action Items"
+                content={processedNotes?.actionItems}
+                type="list"
+              />
+
+              <OutputCard
+                title="Technical Tasks"
+                content={processedNotes?.technicalTasks}
+                type="list"
+              />
+            </div>
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
@@ -363,3 +366,24 @@ function OutputCard({ title, content, type }: OutputCardProps) {
 }
 
 export default App;
+
+function Footer() {
+  return (
+    <footer className="border-t border-gray-200/70 bg-white/50 backdrop-blur-sm mt-16 sm:mt-20">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8 sm:py-12">
+        <p className="text-center text-sm text-gray-500 font-light">
+          © {new Date().getFullYear()} SyncScripts by{' '}
+          <a
+            href="https://www.linkedin.com/in/rawat-priyanshu/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            Priyanshu Rawat
+          </a>
+          . All rights reserved.
+        </p>
+      </div>
+    </footer>
+  );
+}
