@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GoogleGenAI } from '@google/genai';
 import jsPDF from 'jspdf';
+// import SS_GEMINI_API_KEY from .env;
 
 interface ProcessedNotes {
   executiveSummary: string;
@@ -24,29 +25,33 @@ function App() {
     setError('');
 
     try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 'AIzaSyAXABFeKc3MtJUJla_4D0vOuedaN-F_xoA';
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
       
       const ai = new GoogleGenAI({ apiKey });
       
-      const systemPrompt = `You are an experienced Product Manager. Your task is to analyze raw notes from meetings, discussions, or brainstorming sessions and extract structured information.
+      const systemPrompt = `Act as a Senior Product Manager at a Tier-1 tech company. 
+Process meeting transcripts into high-density, structured JSON.
 
-Analyze the provided notes and return a JSON object with exactly three fields:
-1. "executiveSummary": A concise 2-3 sentence summary of the key points and decisions
-2. "actionItems": An array of actionable items that need to be completed (as strings)
-3. "technicalTasks": An array of technical implementation tasks or technical action items (as strings)
-
-Guidelines:
-- Executive Summary should be clear, concise, and capture the essence of the discussion
-- Action Items should be specific, actionable, and written in imperative form (e.g., "Schedule follow-up meeting with stakeholders")
-- Technical Tasks should focus on implementation, development, or technical work needed
-- Return ONLY valid JSON, no markdown formatting or additional text
-- If a category has no items, return an empty array for lists or empty string for summary
-
-Return the response in this exact JSON format:
+### SCHEMA:
 {
-  "executiveSummary": "...",
-  "actionItems": ["...", "..."],
-  "technicalTasks": ["...", "..."]
+  "executiveSummary": "High-level objective and critical decisions (max 60 words).",
+  "actionItems": ["Immediate business/operational next steps."],
+  "technicalTasks": ["Architectural, engineering, or deployment tasks."]
+}
+
+### CONSTRAINTS:
+1. Tone: Professional, concise, imperative.
+2. Deduplication: Merge overlapping points into single high-impact items.
+3. Priority: Rank lists by project impact.
+4. Output: Return ONLY raw JSON. No markdown backticks or preamble.
+5. Null-State: Use "" or [] for empty fields.
+
+### EXAMPLE:
+Input: "We need to fix the lag by adding Redis and Mike will tell the client."
+Output: {
+  "executiveSummary": "Performance optimization via caching layer prioritized to meet client requirements.",
+  "actionItems": ["Communicate performance roadmap to client."],
+  "technicalTasks": ["Implement Redis caching to reduce query latency."]
 }`;
 
       const prompt = `${systemPrompt}\n\nRaw Notes:\n${rawNotes}`;
