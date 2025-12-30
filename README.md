@@ -1,73 +1,55 @@
-# React + TypeScript + Vite
+# SyncScript: AI-Driven Strategic Meeting Intelligence
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**SyncScript** is a high-performance productivity engine designed to eliminate "meeting debt." It leverages Large Language Models (LLMs) to transform unstructured meeting transcripts into professional, high-density executive summaries and actionable technical roadmaps.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 The Problem
+Technical Leads and Product Managers spend an average of **4-6 hours weekly** manually distilling discussion notes into stakeholder reports. This manual process is prone to human error, information loss, and delayed follow-ups.
 
-## React Compiler
+## 💡 The Solution
+SyncScript automates the "Meeting-to-Action" pipeline. Using advanced prompt engineering and the **Gemini 1.5 Flash** architecture, the application distinguishes between business objectives and technical implementation tasks, providing a structured output that is ready for immediate distribution.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## ✨ Key Features
+* **Intelligent Parsing:** Uses Chain-of-Thought prompting to extract P0 priorities and critical decisions.
+* **Dual-Track Classification:** Automatically categorizes insights into Executive Summaries, Business Action Items, and Technical Tasks.
+* **Client-Ready Exports:** Integrated `jsPDF` engine for instant generation of professional, branded PDF reports.
+* **Privacy-Centric Design:** Stateless processing ensures that sensitive transcript data is never stored on a server.
+* **Glassmorphic UI:** A minimalist, responsive interface built with Tailwind CSS for maximum readability.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Tech Stack
+* **Frontend:** React 18, TypeScript, Vite
+* **Styling:** Tailwind CSS (PostCSS)
+* **Intelligence:** Google Gemini 1.5 Flash API
+* **Documentation:** jsPDF
+* **Deployment:** Netlify (CI/CD)
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🏗️ Architecture & Security
+* **Secret Management:** Secured API communication via Vite environment variables and `.env` protection to prevent credential exposure.
+* **Prompt Engineering:** Implemented a robust system prompt designed for high-density JSON extraction and markdown-sanitized parsing.
+* **Data Integrity:** Features a custom regex-based JSON sanitizer to ensure seamless parsing of LLM outputs into the UI components.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚦 Getting Started
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/your-username/syncscript.git](https://github.com/your-username/syncscript.git)
+   ```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+3. **Configure Environment Variables Create a .env file in the root directory:**
+   ```bash
+   VITE_GEMINI_API_KEY=your_api_key_here
+   ```
+4. **Launch Development Server**
+   ```bash
+   npm run dev
+   ```
+
+Created by Priyanshu Rawat - Product-Minded Engineering.
