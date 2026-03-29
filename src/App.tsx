@@ -159,7 +159,9 @@ const GoogleFonts = () => (
       .footer-container { flex-direction: column !important; align-items: center !important; gap: 16px; padding: 24px 20px !important; text-align: center; }
       textarea { font-size: 16px !important; } /* Stops iOS zoom */
       .action-item { flex-direction: column }
-      .action-check { margin-top: 0; margin-bottom: 8px; }
+      .hide-on-mobile { display: none !important; }
+      .generate-btn { width: 100% !important; text-align: center; }
+      .nav-actions { gap: 16px !important; }
     }
   `}</style>
 );
@@ -282,12 +284,12 @@ export default function App() {
               <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 700 }}>SyncScript</span>
               <span style={{ fontSize: 9, letterSpacing: "0.2em", fontWeight: 500, padding: "3px 8px", borderRadius: 3, background: "rgba(0,200,255,0.08)", color: COLORS.accent, border: `1px solid rgba(0,200,255,0.15)`, textTransform: "uppercase" }}>Beta</span>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+            <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: 32 }}>
               <div className="nav-desktop-links" style={{ display: "flex", gap: 32 }}>
                 <a className="nav-link">How it works</a>
-                <a className="nav-link" onClick={() => setCurrentView('pricing')}>Pricing</a>
                 <a className="nav-link">Docs</a>
               </div>
+              <a className="nav-link" onClick={() => setCurrentView('pricing')} style={{ cursor: "pointer" }}>Pricing</a>
               <button className="generate-btn" style={{ padding: "8px 20px", fontSize: 11 }} onClick={() => setCurrentView('auth')}>Sign in</button>
             </div>
           </nav>
@@ -336,7 +338,7 @@ export default function App() {
                 <div style={{ padding: 24 }}>
                   <textarea value={transcript} onChange={e => setTranscript(e.target.value)} placeholder={`Paste your meeting transcript here...\n\nSupported formats:\n- Zoom transcripts\n- Google Meet notes\n- Raw chat logs`} className="scrollbar-thin" style={{ width: "100%", height: 320, background: "rgba(0,0,0,0.3)", border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: 20, color: COLORS.text, fontSize: 13, lineHeight: 1.8, fontFamily: "'DM Mono', monospace", resize: "vertical", transition: "border-color 0.2s" }} onFocus={e => e.target.style.borderColor = COLORS.accentDim} onBlur={e => e.target.style.borderColor = COLORS.border} />
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 24 }}>
-                    <div style={{ display: "flex", gap: 8 }}>
+                    <div className="hide-on-mobile" style={{ display: "flex", gap: 8 }}>
                       {["Executive Summary", "Action Items", "Tech Tasks"].map(tag => (
                         <span key={tag} className="badge badge-teal" style={{ opacity: 0.7 }}>{tag}</span>
                       ))}

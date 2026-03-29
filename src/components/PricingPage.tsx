@@ -30,10 +30,8 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' |
           <img src={logoIcon} alt="SyncScript Logo" style={{ width: 32, height: 32 }} />
           <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 700 }}>SyncScript</span>
         </div>
-        <div className="flex items-center gap-8">
-           <div className="hidden md:flex gap-8">
-             <a onClick={() => onNavigate('app')} style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.textMuted, cursor: "pointer", textDecoration: "none" }}>App</a>
-           </div>
+        <div className="flex items-center gap-5 md:gap-8">
+           <a onClick={() => onNavigate('app')} style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.textMuted, cursor: "pointer", textDecoration: "none" }}>App</a>
           <button style={{ background: "none", border: "none", color: COLORS.textMuted, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }} onClick={() => onNavigate('auth')}>Log in</button>
         </div>
       </nav>
