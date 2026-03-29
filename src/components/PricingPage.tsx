@@ -25,23 +25,25 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' |
       />
       
       {/* Navigation */}
-      <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 40px", borderBottom: `1px solid ${COLORS.border}`, backdropFilter: "blur(12px)", background: "rgba(8,12,24,0.8)", position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }} onClick={() => onNavigate('app')}>
+      <nav className="flex items-center justify-between px-5 md:px-10 py-4 md:py-5 sticky top-0 z-[100] backdrop-blur-md bg-[#080c18cc] border-b" style={{ borderColor: COLORS.border }}>
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('app')}>
           <img src={logoIcon} alt="SyncScript Logo" style={{ width: 32, height: 32 }} />
           <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 700 }}>SyncScript</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-           <a onClick={() => onNavigate('app')} style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.textMuted, cursor: "pointer", textDecoration: "none" }}>App</a>
+        <div className="flex items-center gap-8">
+           <div className="hidden md:flex gap-8">
+             <a onClick={() => onNavigate('app')} style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.textMuted, cursor: "pointer", textDecoration: "none" }}>App</a>
+           </div>
           <button style={{ background: "none", border: "none", color: COLORS.textMuted, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }} onClick={() => onNavigate('auth')}>Log in</button>
         </div>
       </nav>
 
-      <div style={{ position: "relative", zIndex: 10, padding: "80px 20px 120px", maxWidth: 1000, margin: "0 auto" }}>
+      <div className="relative z-10 px-5 md:px-6 py-12 md:py-20 pb-20 max-w-[1000px] mx-auto">
         
         {/* Header */}
-        <div className="text-center mb-20 md:mb-24">
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 44, fontWeight: 800, marginBottom: 16, letterSpacing: "-0.02em" }}>Predictable pricing, designed to scale</h1>
-          <p style={{ color: COLORS.textMuted, fontSize: 15, letterSpacing: "0.02em" }}>Start converting meetings for free, collaborate with your team, then scale.</p>
+        <div className="text-center mb-16 md:mb-24">
+          <h1 className="text-[32px] md:text-[44px] font-[800] mb-4 tracking-[-0.02em] leading-tight" style={{ fontFamily: "'Syne', sans-serif" }}>Predictable pricing, designed to scale</h1>
+          <p className="text-[14px] md:text-[15px]" style={{ color: COLORS.textMuted, letterSpacing: "0.02em" }}>Start converting meetings for free, collaborate with your team, then scale.</p>
         </div>
 
         {/* Pricing Grid */}

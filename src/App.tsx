@@ -146,6 +146,21 @@ const GoogleFonts = () => (
     .scrollbar-thin::-webkit-scrollbar { width: 4px; }
     .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
     .scrollbar-thin::-webkit-scrollbar-thumb { background: ${COLORS.border}; border-radius: 4px; }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .nav-desktop-links { display: none !important; }
+      .nav-container { padding: 16px 20px !important; }
+      .hero-container { padding: 48px 24px 32px !important; }
+      .hero-title { font-size: 36px !important; line-height: 1.15 !important; }
+      .hero-text { font-size: 14px !important; margin-bottom: 24px !important; }
+      .app-container { padding: 0 16px !important; margin-bottom: 40px !important; }
+      .tab-controls { flex-direction: column !important; align-items: stretch !important; gap: 12px; }
+      .footer-container { flex-direction: column !important; align-items: center !important; gap: 16px; padding: 24px 20px !important; text-align: center; }
+      textarea { font-size: 16px !important; } /* Stops iOS zoom */
+      .action-item { flex-direction: column }
+      .action-check { margin-top: 0; margin-bottom: 8px; }
+    }
   `}</style>
 );
 
@@ -261,31 +276,33 @@ export default function App() {
         <div className="glow-orb" style={{ width: 400, height: 400, bottom: 0, right: -100, background: "rgba(124,110,250,0.03)" }} />
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 40px", borderBottom: `1px solid ${COLORS.border}`, backdropFilter: "blur(12px)", background: "rgba(8,12,24,0.8)", position: "sticky", top: 0, zIndex: 100 }}>
+          <nav className="nav-container" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 40px", borderBottom: `1px solid ${COLORS.border}`, backdropFilter: "blur(12px)", background: "rgba(8,12,24,0.8)", position: "sticky", top: 0, zIndex: 100 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <img src={logoIcon} alt="SyncScript Logo" style={{ width: 32, height: 32 }} />
               <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 700 }}>SyncScript</span>
               <span style={{ fontSize: 9, letterSpacing: "0.2em", fontWeight: 500, padding: "3px 8px", borderRadius: 3, background: "rgba(0,200,255,0.08)", color: COLORS.accent, border: `1px solid rgba(0,200,255,0.15)`, textTransform: "uppercase" }}>Beta</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-              <a className="nav-link">How it works</a>
-              <a className="nav-link" onClick={() => setCurrentView('pricing')}>Pricing</a>
-              <a className="nav-link">Docs</a>
+              <div className="nav-desktop-links" style={{ display: "flex", gap: 32 }}>
+                <a className="nav-link">How it works</a>
+                <a className="nav-link" onClick={() => setCurrentView('pricing')}>Pricing</a>
+                <a className="nav-link">Docs</a>
+              </div>
               <button className="generate-btn" style={{ padding: "8px 20px", fontSize: 11 }} onClick={() => setCurrentView('auth')}>Sign in</button>
             </div>
           </nav>
 
           {/* HERO */}
-          <div style={{ textAlign: "center", padding: "72px 40px 48px", maxWidth: 760, margin: "0 auto" }}>
+          <div className="hero-container" style={{ textAlign: "center", padding: "72px 40px 48px", maxWidth: 760, margin: "0 auto" }}>
             <div className="fade-up" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 24 }}>
               <div className="pulse-dot" />
               <span style={{ fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: COLORS.green }}>AI-Powered Meeting Intelligence</span>
             </div>
-            <h1 className="fade-up-1" style={{ fontFamily: "'Syne', sans-serif", fontSize: 54, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 20, background: "linear-gradient(135deg, #E8EEF8 30%, #5A7090 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <h1 className="fade-up-1 hero-title" style={{ fontFamily: "'Syne', sans-serif", fontSize: 54, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 20, background: "linear-gradient(135deg, #E8EEF8 30%, #5A7090 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               Turn meetings into<br />
               <span style={{ background: "linear-gradient(135deg, #00C8FF, #7C6EFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>actionable work.</span>
             </h1>
-            <p className="fade-up-2" style={{ fontSize: 16, lineHeight: 1.7, color: COLORS.textMuted, maxWidth: 520, margin: "0 auto 40px", fontFamily: "'DM Mono', monospace" }}>
+            <p className="fade-up-2 hero-text" style={{ fontSize: 16, lineHeight: 1.7, color: COLORS.textMuted, maxWidth: 520, margin: "0 auto 40px", fontFamily: "'DM Mono', monospace" }}>
               Paste any conversation transcript. Get executive summaries, action items, and structured technical tasks — instantly.
             </p>
             <div className="fade-up-3" style={{ display: "flex", justifyContent: "center", gap: 24 }}>
@@ -298,9 +315,9 @@ export default function App() {
           </div>
 
           {/* APP */}
-          <div style={{ maxWidth: 900, margin: "0 auto 80px", padding: "0 40px" }}>
+          <div className="app-container" style={{ maxWidth: 900, margin: "0 auto 80px", padding: "0 40px" }}>
             <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 12, overflow: "hidden" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: `1px solid ${COLORS.border}`, background: "rgba(0,0,0,0.2)" }}>
+              <div className="tab-controls" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: `1px solid ${COLORS.border}`, background: "rgba(0,0,0,0.2)" }}>
                 <div style={{ display: "flex", gap: 4 }}>
                   <button className={`tab-btn ${tab === "input" ? "active" : "inactive"}`} onClick={() => setTab("input")}>Input</button>
                   <button className={`tab-btn ${tab === "result" && result ? "active" : "inactive"}`} onClick={() => result && setTab("result")} style={{ opacity: result ? 1 : 0.4 }}>
@@ -418,10 +435,10 @@ export default function App() {
             </div>
           </div>
 
-          <footer style={{ borderTop: `1px solid ${COLORS.border}`, padding: "24px 40px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <footer className="footer-container" style={{ borderTop: `1px solid ${COLORS.border}`, padding: "24px 40px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: COLORS.textMuted }}>SyncScript</span>
             <span style={{ fontSize: 11, color: COLORS.textDim, letterSpacing: "0.08em" }}>© 2026 Priyanshu Rawat</span>
-            <div style={{ display: "flex", gap: 24 }}>
+            <div className="nav-desktop-links" style={{ display: "flex", gap: 24 }}>
               <a className="nav-link">Privacy</a>
               <a className="nav-link">Terms</a>
             </div>
