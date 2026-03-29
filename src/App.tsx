@@ -1,389 +1,433 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GoogleGenAI } from '@google/genai';
-import jsPDF from 'jspdf';
-// import SS_GEMINI_API_KEY from .env;
+import AuthPage from './components/AuthPage';
+import PricingPage from './components/PricingPage';
+import { COLORS } from './theme';
+import logoIcon from './assets/logo.svg';
 
-interface ProcessedNotes {
-  executiveSummary: string;
-  actionItems: string[];
-  technicalTasks: string[];
+// --- STYLES & GLOBALS ---
+
+const style = {
+  root: { fontFamily: "'DM Mono', monospace", background: COLORS.bg, minHeight: "100vh", color: COLORS.text }
+};
+
+const TYPE_BADGE: Record<string, string> = {
+  Bug: "badge-teal", Feature: "badge-green", DevOps: "badge-indigo", QA: "badge-indigo",
+};
+
+const PRIORITY_STYLES: Record<string, any> = {
+  critical: { color: "#FF5A7A", bg: "rgba(255,90,122,0.08)", border: "rgba(255,90,122,0.2)" },
+  high: { color: "#FFB547", bg: "rgba(255,181,71,0.08)", border: "rgba(255,181,71,0.2)" },
+  medium: { color: COLORS.accent, bg: COLORS.accentGlow, border: "rgba(0,200,255,0.2)" },
+};
+
+const GoogleFonts = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap');
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --bg: ${COLORS.bg};
+      --surface: ${COLORS.surface};
+      --border: ${COLORS.border};
+      --accent: ${COLORS.accent};
+      --green: ${COLORS.green};
+      --indigo: ${COLORS.indigo};
+      --text: ${COLORS.text};
+      --muted: ${COLORS.textMuted};
+    }
+    
+    body { background: var(--bg); }
+    
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+    
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    .fade-up { animation: fadeUp 0.5s ease forwards; }
+    .fade-up-1 { animation: fadeUp 0.5s ease 0.1s both; }
+    .fade-up-2 { animation: fadeUp 0.5s ease 0.2s both; }
+    .fade-up-3 { animation: fadeUp 0.5s ease 0.3s both; }
+    
+    textarea:focus, button:focus { outline: none; }
+    
+    .generate-btn {
+      background: linear-gradient(135deg, #00C8FF, #7C6EFA); border: none; color: #fff;
+      font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase; padding: 14px 32px;
+      border-radius: 6px; cursor: pointer; transition: all 0.2s ease;
+      position: relative; overflow: hidden;
+    }
+    .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(0,200,255,0.3); }
+    .generate-btn:active { transform: translateY(0); }
+    .generate-btn.loading {
+      background: linear-gradient(90deg, #00C8FF 0%, #7C6EFA 50%, #00C8FF 100%);
+      background-size: 200% 100%; animation: shimmer 1.5s linear infinite;
+    }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    .tab-btn {
+      background: none; border: none; cursor: pointer; font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 16px; border-radius: 4px; transition: all 0.15s ease;
+    }
+    .tab-btn.active { background: rgba(0,200,255,0.1); color: ${COLORS.accent}; }
+    .tab-btn.inactive { color: ${COLORS.textMuted}; }
+    .tab-btn.inactive:hover { color: ${COLORS.text}; background: rgba(255,255,255,0.04); }
+    
+    .result-card {
+      background: ${COLORS.surface}; border: 1px solid ${COLORS.border};
+      border-radius: 8px; padding: 20px; margin-bottom: 12px; transition: border-color 0.2s ease;
+    }
+    .result-card:hover { border-color: ${COLORS.borderLight}; }
+    
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 500;
+      letter-spacing: 0.12em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px;
+    }
+    .badge-teal { background: rgba(0,200,255,0.1); color: ${COLORS.accent}; border: 1px solid rgba(0,200,255,0.2); }
+    .badge-green { background: rgba(0,229,160,0.1); color: ${COLORS.green}; border: 1px solid rgba(0,229,160,0.2); }
+    .badge-indigo { background: rgba(124,110,250,0.1); color: ${COLORS.indigo}; border: 1px solid rgba(124,110,250,0.2); }
+    
+    .copy-btn {
+      background: rgba(255,255,255,0.04); border: 1px solid ${COLORS.border}; color: ${COLORS.textMuted};
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 4px; cursor: pointer; transition: all 0.15s ease;
+    }
+    .copy-btn:hover { background: rgba(255,255,255,0.08); color: ${COLORS.text}; border-color: ${COLORS.borderLight}; }
+    
+    .action-item {
+      display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid ${COLORS.border};
+    }
+    .action-item:last-child { border-bottom: none; }
+    
+    .action-check {
+      width: 16px; height: 16px; border: 1px solid ${COLORS.borderLight}; border-radius: 3px;
+      flex-shrink: 0; margin-top: 2px; cursor: pointer; transition: all 0.15s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .action-check.checked { background: ${COLORS.green}; border-color: ${COLORS.green}; }
+    
+    .nav-link {
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: ${COLORS.textMuted};
+      cursor: pointer; transition: color 0.15s ease; text-decoration: none;
+    }
+    .nav-link:hover { color: ${COLORS.text}; }
+    
+    .grid-bg {
+      background-image: linear-gradient(rgba(26,40,64,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(26,40,64,0.6) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    
+    .noise {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23a)'/%3E%3C/svg%3E");
+    }
+    
+    .glow-orb {
+      position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0;
+    }
+    
+    .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+    .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: ${COLORS.border}; border-radius: 4px; }
+  `}</style>
+);
+
+interface MockResult {
+  summary: string;
+  actions: { id: number; text: string; owner: string; priority: string }[];
+  tasks: { id: number; title: string; type: string; estimate: string; assignee: string }[];
 }
 
-function App() {
-  const [rawNotes, setRawNotes] = useState('');
-  const [processedNotes, setProcessedNotes] = useState<ProcessedNotes | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+// --- MAIN APP COMPONENT ---
+export default function App() {
+  const [tab, setTab] = useState("input");
+  const [transcript, setTranscript] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<MockResult | null>(null);
+  const [resultTab, setResultTab] = useState("summary");
+  const [checked, setChecked] = useState<Record<number, boolean>>({});
+  const [copied, setCopied] = useState(false);
+  const [charCount, setCharCount] = useState(0);
+
+  // User hits tracking logic
+  const [currentView, setCurrentView] = useState<'app' | 'auth' | 'pricing'>('app');
+  const [hits, setHits] = useState<number>(0);
+
+  useEffect(() => {
+    const storedHits = localStorage.getItem('syncScriptsHits');
+    if (storedHits) {
+      setHits(parseInt(storedHits, 10));
+    }
+  }, []);
+
+  useEffect(() => { setCharCount(transcript.length); }, [transcript]);
 
   const handleGenerate = async () => {
-    if (!rawNotes.trim()) {
-      setError('Please enter some notes to process');
+    if (hits >= 2) {
+      setCurrentView('auth');
       return;
     }
 
-    setIsLoading(true);
-    setError('');
+    if (!transcript.trim()) return;
+    setLoading(true);
 
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
       
       const ai = new GoogleGenAI({ apiKey });
+      const systemPrompt = `You are a Senior Product Manager processing transcripts. Return ONLY a raw JSON object string with no markdown backticks, representing actionable metrics.
       
-      const systemPrompt = `Act as a Senior Product Manager at a Tier-1 tech company. 
-Process meeting transcripts into high-density, structured JSON.
-
 ### SCHEMA:
 {
-  "executiveSummary": "High-level objective and critical decisions (max 60 words).",
-  "actionItems": ["Immediate business/operational next steps."],
-  "technicalTasks": ["Architectural, engineering, or deployment tasks."]
-}
-
-### CONSTRAINTS:
-1. Tone: Professional, concise, imperative.
-2. Deduplication: Merge overlapping points into single high-impact items.
-3. Priority: Rank lists by project impact.
-4. Output: Return ONLY raw JSON. No markdown backticks or preamble.
-5. Null-State: Use "" or [] for empty fields.
-
-### EXAMPLE:
-Input: "We need to fix the lag by adding Redis and Mike will tell the client."
-Output: {
-  "executiveSummary": "Performance optimization via caching layer prioritized to meet client requirements.",
-  "actionItems": ["Communicate performance roadmap to client."],
-  "technicalTasks": ["Implement Redis caching to reduce query latency."]
+  "summary": "High-level goal and decisions (max 60 words).",
+  "actions": [
+    { "id": 1, "text": "Immediate next step.", "owner": "Name or N/A", "priority": "high|medium|critical" }
+  ],
+  "tasks": [
+    { "id": 1, "title": "Implementation task", "type": "Bug|Feature|DevOps|QA", "estimate": "1d/2h", "assignee": "Name" }
+  ]
 }`;
 
-      const prompt = `${systemPrompt}\n\nRaw Notes:\n${rawNotes}`;
+      const prompt = `${systemPrompt}\n\nRaw Notes:\n${transcript}`;
       
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: prompt,
       });
       
-      const responseText = response.text || '';
+      let jsonText = (response.text || '').trim();
+      if (jsonText.startsWith('```json')) jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+      else if (jsonText.startsWith('```')) jsonText = jsonText.replace(/```\n?/g, '');
       
-      if (!responseText) {
-        throw new Error('No response text received from API');
-      }
-      
-      // Parse JSON from response (remove markdown code blocks if present)
-      let jsonText = responseText.trim();
-      if (jsonText.startsWith('```json')) {
-        jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-      } else if (jsonText.startsWith('```')) {
-        jsonText = jsonText.replace(/```\n?/g, '');
-      }
-      
-      let processedData;
-      try {
-        processedData = JSON.parse(jsonText);
-      } catch (parseError) {
-        console.error('Failed to parse JSON:', jsonText);
-        throw new Error(`Failed to parse JSON response: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
-      }
-      
-      // Validate and set the processed notes
-      if (processedData.executiveSummary !== undefined && Array.isArray(processedData.actionItems) && Array.isArray(processedData.technicalTasks)) {
-        setProcessedNotes({
-          executiveSummary: processedData.executiveSummary || '',
-          actionItems: processedData.actionItems || [],
-          technicalTasks: processedData.technicalTasks || [],
-        });
+      const processedData = JSON.parse(jsonText);
+      if (processedData.summary && Array.isArray(processedData.actions) && Array.isArray(processedData.tasks)) {
+        setResult(processedData as MockResult);
+        const newHits = hits + 1;
+        setHits(newHits);
+        localStorage.setItem('syncScriptsHits', newHits.toString());
+        setTab("result");
+        setResultTab("summary");
       } else {
-        console.error('Invalid response structure:', processedData);
-        throw new Error(`Invalid response format from API. Expected: {executiveSummary: string, actionItems: string[], technicalTasks: string[]}. Got: ${JSON.stringify(processedData)}`);
+        throw new Error("Invalid schema returned.");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to process notes. Please try again.');
       console.error(err);
+      alert("Failed to process with live API. Please try again.");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
-
-  const handleDownloadPDF = () => {
-    if (!processedNotes) return;
-
-    const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 20;
-    const maxWidth = pageWidth - 2 * margin;
-    let yPosition = margin;
-
-    // Helper function to add a new page if needed
-    const checkPageBreak = (requiredHeight: number) => {
-      if (yPosition + requiredHeight > pageHeight - margin) {
-        doc.addPage();
-        yPosition = margin;
-        return true;
-      }
-      return false;
-    };
-
-    // Helper function to split text into lines
-    const splitText = (text: string, maxWidth: number): string[] => {
-      return doc.splitTextToSize(text, maxWidth);
-    };
-
-    // Title
-    doc.setFontSize(24);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(26, 32, 44); // gray-900
-    doc.text('SyncScript Report', margin, yPosition);
-    yPosition += 10;
-
-    // Date
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(107, 114, 128); // gray-500
-    const dateStr = new Date().toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
-    });
-    doc.text(`Generated on ${dateStr}`, margin, yPosition);
-    yPosition += 15;
-
-    // Executive Summary Section
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(37, 99, 235); // blue-600
-    doc.text('Executive Summary', margin, yPosition);
-    yPosition += 8;
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(55, 65, 81); // gray-700
-    const summaryLines = splitText(processedNotes.executiveSummary || 'No summary available.', maxWidth);
-    summaryLines.forEach((line: string) => {
-      checkPageBreak(7);
-      doc.text(line, margin, yPosition);
-      yPosition += 7;
-    });
-    yPosition += 10;
-
-    // Action Items Section
-    checkPageBreak(15);
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(37, 99, 235);
-    doc.text('Action Items', margin, yPosition);
-    yPosition += 8;
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(55, 65, 81);
-    
-    if (processedNotes.actionItems && processedNotes.actionItems.length > 0) {
-      processedNotes.actionItems.forEach((item: string) => {
-        checkPageBreak(7);
-        const itemLines = splitText(`• ${item}`, maxWidth);
-        itemLines.forEach((line: string, index: number) => {
-          if (index > 0) checkPageBreak(7);
-          doc.text(line, margin, yPosition);
-          yPosition += 7;
-        });
-        yPosition += 3;
-      });
-    } else {
-      doc.text('No action items available.', margin, yPosition);
-      yPosition += 7;
-    }
-    yPosition += 10;
-
-    // Technical Tasks Section
-    checkPageBreak(15);
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(37, 99, 235);
-    doc.text('Technical Tasks', margin, yPosition);
-    yPosition += 8;
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(55, 65, 81);
-    
-    if (processedNotes.technicalTasks && processedNotes.technicalTasks.length > 0) {
-      processedNotes.technicalTasks.forEach((item: string) => {
-        checkPageBreak(7);
-        const itemLines = splitText(`• ${item}`, maxWidth);
-        itemLines.forEach((line: string, index: number) => {
-          if (index > 0) checkPageBreak(7);
-          doc.text(line, margin, yPosition);
-          yPosition += 7;
-        });
-        yPosition += 3;
-      });
-    } else {
-      doc.text('No technical tasks available.', margin, yPosition);
-      yPosition += 7;
-    }
-
-    // Save the PDF
-    const fileName = `SyncScript_Report_${new Date().toISOString().split('T')[0]}.pdf`;
-    doc.save(fileName);
+  
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
+
+  const toggleCheck = (id: number) => setChecked(p => ({ ...p, [id]: !p[id] }));
+
+  if (currentView === 'auth') {
+    return <AuthPage />;
+  }
+  
+  if (currentView === 'pricing') {
+    return <PricingPage onNavigate={setCurrentView} />;
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col">
-      <div className="flex-1">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 py-12 sm:py-16">
-          <div className="text-center mb-12 sm:mb-16">
-            <h1 className="text-5xl sm:text-6xl font-light text-gray-900 mb-3 tracking-tight">
-              SyncScripts
+    <>
+      <GoogleFonts />
+      <div style={style.root} className="grid-bg">
+        <div className="noise" />
+        <div className="glow-orb" style={{ width: 600, height: 600, top: -200, left: -100, background: "rgba(0,200,255,0.03)" }} />
+        <div className="glow-orb" style={{ width: 400, height: 400, bottom: 0, right: -100, background: "rgba(124,110,250,0.03)" }} />
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 40px", borderBottom: `1px solid ${COLORS.border}`, backdropFilter: "blur(12px)", background: "rgba(8,12,24,0.8)", position: "sticky", top: 0, zIndex: 100 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <img src={logoIcon} alt="SyncScript Logo" style={{ width: 32, height: 32 }} />
+              <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 700 }}>SyncScript</span>
+              <span style={{ fontSize: 9, letterSpacing: "0.2em", fontWeight: 500, padding: "3px 8px", borderRadius: 3, background: "rgba(0,200,255,0.08)", color: COLORS.accent, border: `1px solid rgba(0,200,255,0.15)`, textTransform: "uppercase" }}>Beta</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+              <a className="nav-link">How it works</a>
+              <a className="nav-link" onClick={() => setCurrentView('pricing')}>Pricing</a>
+              <a className="nav-link">Docs</a>
+              <button className="generate-btn" style={{ padding: "8px 20px", fontSize: 11 }} onClick={() => setCurrentView('auth')}>Sign in</button>
+            </div>
+          </nav>
+
+          {/* HERO */}
+          <div style={{ textAlign: "center", padding: "72px 40px 48px", maxWidth: 760, margin: "0 auto" }}>
+            <div className="fade-up" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 24 }}>
+              <div className="pulse-dot" />
+              <span style={{ fontSize: 11, letterSpacing: "0.15em", textTransform: "uppercase", color: COLORS.green }}>AI-Powered Meeting Intelligence</span>
+            </div>
+            <h1 className="fade-up-1" style={{ fontFamily: "'Syne', sans-serif", fontSize: 54, fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 20, background: "linear-gradient(135deg, #E8EEF8 30%, #5A7090 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              Turn meetings into<br />
+              <span style={{ background: "linear-gradient(135deg, #00C8FF, #7C6EFA)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>actionable work.</span>
             </h1>
-            <p className="text-gray-500 text-sm sm:text-base font-light mt-2">
-              Transform raw notes into structured insights
+            <p className="fade-up-2" style={{ fontSize: 16, lineHeight: 1.7, color: COLORS.textMuted, maxWidth: 520, margin: "0 auto 40px", fontFamily: "'DM Mono', monospace" }}>
+              Paste any conversation transcript. Get executive summaries, action items, and structured technical tasks — instantly.
             </p>
+            <div className="fade-up-3" style={{ display: "flex", justifyContent: "center", gap: 24 }}>
+              {[ { icon: "⚡", label: "Instant output" }, { icon: "🎯", label: "JIRA-ready tasks" }, { icon: "🔒", label: "No data stored" } ].map(f => (
+                <div key={f.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 14 }}>{f.icon}</span><span style={{ fontSize: 11, letterSpacing: "0.08em", color: COLORS.textMuted, textTransform: "uppercase" }}>{f.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Input Section */}
-            <div className="space-y-6">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/90 to-gray-50/90 backdrop-blur-2xl rounded-3xl border border-gray-200/80 shadow-xl"></div>
-                <div className="relative p-6 sm:p-8">
-                  <label className="block text-xs font-semibold text-gray-500 mb-4 uppercase tracking-wider">
-                    Raw Notes
-                  </label>
-                  <textarea
-                    value={rawNotes}
-                    onChange={(e) => setRawNotes(e.target.value)}
-                    placeholder="Paste your meeting notes, brainstorming ideas, or discussion points here..."
-                    className="w-full h-[500px] px-5 py-4 bg-white/80 backdrop-blur-sm border border-gray-200/70 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 outline-none resize-none text-gray-800 placeholder-gray-400/70 text-[15px] leading-relaxed transition-all font-light"
-                  />
+          {/* APP */}
+          <div style={{ maxWidth: 900, margin: "0 auto 80px", padding: "0 40px" }}>
+            <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 24px", borderBottom: `1px solid ${COLORS.border}`, background: "rgba(0,0,0,0.2)" }}>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <button className={`tab-btn ${tab === "input" ? "active" : "inactive"}`} onClick={() => setTab("input")}>Input</button>
+                  <button className={`tab-btn ${tab === "result" && result ? "active" : "inactive"}`} onClick={() => result && setTab("result")} style={{ opacity: result ? 1 : 0.4 }}>
+                    Output {result && <span style={{ marginLeft: 6, width: 6, height: 6, borderRadius: "50%", background: COLORS.green, display: "inline-block" }} />}
+                  </button>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  {tab === "input" && (
+                    <span style={{ fontSize: 10, color: COLORS.textDim, letterSpacing: "0.08em", textTransform: "uppercase" }}>{charCount.toLocaleString()} chars</span>
+                  )}
                 </div>
               </div>
 
-              <button
-                onClick={handleGenerate}
-                disabled={isLoading || !rawNotes.trim()}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3.5 px-8 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:shadow-none disabled:translate-y-0 text-base"
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </span>
-                ) : (
-                  'Generate'
-                )}
-              </button>
-
-              {error && (
-                <div className="p-4 bg-red-50/80 border border-red-200/70 rounded-xl text-red-600 text-sm backdrop-blur-sm">
-                  {error}
+              {/* Input panel */}
+              {tab === "input" && (
+                <div style={{ padding: 24 }}>
+                  <textarea value={transcript} onChange={e => setTranscript(e.target.value)} placeholder={`Paste your meeting transcript here...\n\nSupported formats:\n- Zoom transcripts\n- Google Meet notes\n- Raw chat logs`} className="scrollbar-thin" style={{ width: "100%", height: 320, background: "rgba(0,0,0,0.3)", border: `1px solid ${COLORS.border}`, borderRadius: 8, padding: 20, color: COLORS.text, fontSize: 13, lineHeight: 1.8, fontFamily: "'DM Mono', monospace", resize: "vertical", transition: "border-color 0.2s" }} onFocus={e => e.target.style.borderColor = COLORS.accentDim} onBlur={e => e.target.style.borderColor = COLORS.border} />
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 24 }}>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      {["Executive Summary", "Action Items", "Tech Tasks"].map(tag => (
+                        <span key={tag} className="badge badge-teal" style={{ opacity: 0.7 }}>{tag}</span>
+                      ))}
+                    </div>
+                    <button className={`generate-btn ${loading ? "loading" : ""}`} onClick={handleGenerate} disabled={!transcript.trim() || loading}>
+                      {loading ? "Processing..." : "Generate →"}
+                    </button>
+                  </div>
                 </div>
               )}
-            </div>
 
-            {/* Output Section */}
-            <div className="space-y-5">
-              {processedNotes && (
-                <div className="mb-4 flex justify-end">
-                  <button
-                    onClick={handleDownloadPDF}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Download PDF
-                  </button>
+              {/* Result panel */}
+              {tab === "result" && result && (
+                <div style={{ padding: 24 }} className="fade-up">
+                  <div style={{ display: "flex", gap: 4, marginBottom: 24 }}>
+                    {[
+                      { key: "summary", label: "Summary", badge: "badge-teal" },
+                      { key: "actions", label: `Actions (${result.actions.length})`, badge: "badge-green" },
+                      { key: "tasks", label: `Tasks (${result.tasks.length})`, badge: "badge-indigo" }
+                    ].map(t => (
+                      <button key={t.key} className={`tab-btn ${resultTab === t.key ? "active" : "inactive"}`} onClick={() => setResultTab(t.key)}>{t.label}</button>
+                    ))}
+                    <div style={{ flex: 1 }} />
+                    <button className="copy-btn" onClick={() => handleCopy(JSON.stringify(result, null, 2))}>
+                      {copied ? "✓ Copied" : "Export JSON"}
+                    </button>
+                  </div>
+
+                  {/* Summary */}
+                  {resultTab === "summary" && (
+                    <div className="fade-up">
+                      <div className="result-card">
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                          <span className="badge badge-teal">Executive Summary</span>
+                          <button className="copy-btn" onClick={() => handleCopy(result.summary)}>Copy text</button>
+                        </div>
+                        <p style={{ fontSize: 14, lineHeight: 1.8, color: COLORS.text, fontFamily: "'DM Mono', monospace" }}>{result.summary}</p>
+                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
+                        <div className="result-card">
+                          <div style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: COLORS.textMuted, marginBottom: 8 }}>Actionable Items</div>
+                          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: COLORS.green }}>{result.actions.length}</div>
+                        </div>
+                        <div className="result-card">
+                          <div style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: COLORS.textMuted, marginBottom: 8 }}>Engineering Tasks</div>
+                          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 28, fontWeight: 700, color: COLORS.indigo }}>{result.tasks.length}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  {resultTab === "actions" && (
+                    <div className="fade-up result-card" style={{ padding: "0 20px" }}>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${COLORS.border}`, padding: "20px 0" }}>
+                        <span className="badge badge-green">Action Items</span>
+                        <span style={{ fontSize: 10, color: COLORS.textMuted, letterSpacing: "0.08em" }}>{Object.values(checked).filter(Boolean).length}/{result.actions.length} Completed</span>
+                      </div>
+                      <div style={{ padding: "10px 0" }}>
+                        {result.actions.map(a => {
+                          const p = PRIORITY_STYLES[a.priority] || PRIORITY_STYLES.medium;
+                          return (
+                            <div key={a.id} className="action-item">
+                              <div className={`action-check ${checked[a.id] ? "checked" : ""}`} onClick={() => toggleCheck(a.id)}>
+                                {checked[a.id] && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <p style={{ fontSize: 13, lineHeight: 1.6, color: checked[a.id] ? COLORS.textDim : COLORS.text, textDecoration: checked[a.id] ? "line-through" : "none", marginBottom: 6 }}>{a.text}</p>
+                                <div style={{ display: "flex", gap: 8 }}>
+                                  <span style={{ fontSize: 10, color: COLORS.textMuted }}>@{a.owner}</span>
+                                  <span style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: p.color, background: p.bg, border: `1px solid ${p.border}`, padding: "1px 7px", borderRadius: 3 }}>{a.priority}</span>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tasks */}
+                  {resultTab === "tasks" && (
+                    <div className="fade-up">
+                      {result.tasks.map(t => (
+                        <div key={t.id} className="result-card" style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                          <span className={`badge ${TYPE_BADGE[t.type] || "badge-teal"}`}>{t.type}</span>
+                          <span style={{ flex: 1, fontSize: 13, color: COLORS.text }}>{t.title}</span>
+                          <span style={{ fontSize: 11, color: COLORS.textMuted }}>@{t.assignee}</span>
+                          <span style={{ fontSize: 11, color: COLORS.accent, background: COLORS.accentGlow, border: `1px solid rgba(0,200,255,0.15)`, padding: "3px 10px", borderRadius: 4 }}>{t.estimate}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
-              
-              <OutputCard
-                title="Executive Summary"
-                content={processedNotes?.executiveSummary}
-                type="text"
-              />
-
-              <OutputCard
-                title="Action Items"
-                content={processedNotes?.actionItems}
-                type="list"
-              />
-
-              <OutputCard
-                title="Technical Tasks"
-                content={processedNotes?.technicalTasks}
-                type="list"
-              />
             </div>
           </div>
+
+          <footer style={{ borderTop: `1px solid ${COLORS.border}`, padding: "24px 40px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: COLORS.textMuted }}>SyncScript</span>
+            <span style={{ fontSize: 11, color: COLORS.textDim, letterSpacing: "0.08em" }}>© 2026 Priyanshu Rawat</span>
+            <div style={{ display: "flex", gap: 24 }}>
+              <a className="nav-link">Privacy</a>
+              <a className="nav-link">Terms</a>
+            </div>
+          </footer>
         </div>
       </div>
-      <Footer />
-    </div>
-  );
-}
-
-interface OutputCardProps {
-  title: string;
-  content: string | string[] | undefined;
-  type: 'text' | 'list';
-}
-
-function OutputCard({ title, content, type }: OutputCardProps) {
-  return (
-    <div className="bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200/70 shadow-sm p-6 sm:p-8 min-h-[200px] flex flex-col transition-all duration-200 hover:shadow-md hover:border-gray-300/70">
-      <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-5 sm:mb-6 tracking-tight">
-        {title}
-      </h3>
-
-      {!content ? (
-        <div className="flex-1 flex items-center justify-center">
-          <p className="text-gray-400/70 italic text-sm font-light">
-            Results will appear here after processing...
-          </p>
-        </div>
-      ) : type === 'text' ? (
-        <div className="flex-1">
-          <p className="text-gray-700 leading-relaxed text-[15px] sm:text-base font-light whitespace-pre-wrap">
-            {content as string}
-          </p>
-        </div>
-      ) : (
-        <ul className="flex-1 space-y-2.5 sm:space-y-3">
-          {(content as string[]).map((item, index) => (
-            <li key={index} className="flex items-start gap-3">
-              <span className="text-blue-600 mt-1.5 text-xl font-light flex-shrink-0">•</span>
-              <span className="text-gray-700 flex-1 text-[15px] sm:text-base leading-relaxed font-light">
-                {item}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
-
-export default App;
-
-function Footer() {
-  return (
-    <footer className="border-t border-gray-200/70 bg-white/50 backdrop-blur-sm mt-16 sm:mt-20">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-8 sm:py-12">
-        <p className="text-center text-sm text-gray-500 font-light">
-          © {new Date().getFullYear()} SyncScripts by{' '}
-          <a
-            href="https://www.linkedin.com/in/rawat-priyanshu/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
-          >
-            Priyanshu Rawat
-          </a>
-          . All rights reserved.
-        </p>
-      </div>
-    </footer>
+    </>
   );
 }
