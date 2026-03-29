@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { COLORS } from '../theme';
 import logoIcon from '../assets/logo.svg';
+import { supabase } from '../supabase';
 
 const AuthGoogleFonts = () => (
   <style>{`
@@ -38,8 +39,34 @@ const AuthGoogleFonts = () => (
   `}</style>
 );
 
-export default function AuthPage() {
+export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | 'auth' | 'pricing') => void }) {
   const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleAuth = async () => {
+    if (!email || !password) return setErrorMsg("Please fill all fields");
+    setLoading(true);
+    setErrorMsg("");
+    
+    let err = null;
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      err = error;
+    } else {
+      const { error } = await supabase.auth.signUp({ email, password });
+      err = error;
+    }
+    
+    setLoading(false);
+    if (err) {
+      setErrorMsg(err.message);
+    } else {
+      if (onNavigate) onNavigate('app');
+    }
+  };
 
   return (
     <>
@@ -65,12 +92,43 @@ export default function AuthPage() {
               <SocialButton icon={<BitbucketIcon />} label={isLogin ? "Continue with Bitbucket" : "Sign up with Bitbucket"} />
             </div>
 
-            <div className="flex flex-col items-center gap-4 mb-16">
-              <button className="text-[#00C8FF] hover:text-[#0090BB] text-[11px] font-bold tracking-widest uppercase transition-colors">
-                {isLogin ? "Continue with Email" : "Sign up with Email"}
-              </button>
-              <button className="text-[#00C8FF] hover:text-[#0090BB] text-[11px] font-bold tracking-widest uppercase transition-colors">
-                {isLogin ? "Continue with SSO" : "Sign up with SSO"}
+            <div className="w-full flex flex-col items-center gap-4 mb-10 mt-6 md:mt-0">
+              <div className="w-full h-[1px] bg-[#1A2840] relative">
+                <span className="absolute left-1/2 -top-[10px] -translate-x-1/2 px-4 bg-[#0E1525] text-[#5A7090] text-[10px] tracking-widest font-bold uppercase">or email</span>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col gap-3 mb-10">
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="w-full bg-[rgba(0,0,0,0.3)] border border-[#1A2840] rounded-md px-4 py-3 text-[13px] text-[#E8EEF8] focus:border-[#0090BB] focus:outline-none transition-colors"
+                autoComplete="email"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="w-full bg-[rgba(0,0,0,0.3)] border border-[#1A2840] rounded-md px-4 py-3 text-[13px] text-[#E8EEF8] focus:border-[#0090BB] focus:outline-none transition-colors"
+                onKeyDown={e => e.key === 'Enter' && handleAuth()}
+                autoComplete={isLogin ? "current-password" : "new-password"}
+              />
+              
+              {errorMsg && (
+                <div className="text-[#EA4335] text-[11px] font-medium tracking-wide mt-1 text-center bg-[rgba(234,67,53,0.1)] py-2 rounded">
+                  {errorMsg}
+                </div>
+              )}
+              
+              <button 
+                onClick={handleAuth}
+                disabled={loading}
+                className={`w-full bg-gradient-to-r from-[#00C8FF] to-[#7C6EFA] hover:opacity-90 text-[#080C18] font-bold text-[12px] uppercase tracking-wide py-3 rounded-md transition-all mt-2 ${loading ? 'opacity-70 cursor-wait' : ''}`}
+              >
+                {loading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
               </button>
             </div>
 

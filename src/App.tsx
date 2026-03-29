@@ -4,6 +4,7 @@ import AuthPage from './components/AuthPage';
 import PricingPage from './components/PricingPage';
 import { COLORS } from './theme';
 import logoIcon from './assets/logo.svg';
+import { supabase } from './supabase';
 
 // --- STYLES & GLOBALS ---
 
@@ -186,6 +187,36 @@ export default function App() {
   // User hits tracking logic
   const [currentView, setCurrentView] = useState<'app' | 'auth' | 'pricing'>('app');
   const [hits, setHits] = useState<number>(0);
+  const [user, setUser] = useState<any>(null);
+  const [userPlan, setUserPlan] = useState<string>('free');
+  const [userUsage, setUserUsage] = useState<number>(0);
+
+  const fetchUserLimits = async (userId: string) => {
+    const [subRes, usageRes] = await Promise.all([
+      supabase.from('subscriptions').select('plan').eq('user_id', userId).single(),
+      supabase.from('usage').select('generations_count').eq('user_id', userId).single()
+    ]);
+    if (subRes.data) setUserPlan(subRes.data.plan);
+    if (usageRes.data) setUserUsage(usageRes.data.generations_count);
+  };
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
+      setUser(session?.user || null);
+      if (session?.user) fetchUserLimits(session.user.id);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      setUser(session?.user || null);
+      if (session?.user) fetchUserLimits(session.user.id);
+      else {
+        setUserPlan('free');
+        setUserUsage(0);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const storedHits = localStorage.getItem('syncScriptsHits');
@@ -197,8 +228,14 @@ export default function App() {
   useEffect(() => { setCharCount(transcript.length); }, [transcript]);
 
   const handleGenerate = async () => {
-    if (hits >= 2) {
+    if (!user && hits >= 2) {
       setCurrentView('auth');
+      return;
+    }
+    
+    // Strict Database Checking for Authenticated Users
+    if (user && userPlan === 'free' && userUsage >= 3) {
+      setCurrentView('pricing');
       return;
     }
 
@@ -237,9 +274,17 @@ export default function App() {
       const processedData = JSON.parse(jsonText);
       if (processedData.summary && Array.isArray(processedData.actions) && Array.isArray(processedData.tasks)) {
         setResult(processedData as MockResult);
-        const newHits = hits + 1;
-        setHits(newHits);
-        localStorage.setItem('syncScriptsHits', newHits.toString());
+        
+        if (user) {
+          const newUsage = userUsage + 1;
+          setUserUsage(newUsage);
+          await supabase.from('usage').update({ generations_count: newUsage }).eq('user_id', user.id);
+        } else {
+          const newHits = hits + 1;
+          setHits(newHits);
+          localStorage.setItem('syncScriptsHits', newHits.toString());
+        }
+        
         setTab("result");
         setResultTab("summary");
       } else {
@@ -262,7 +307,7 @@ export default function App() {
   const toggleCheck = (id: number) => setChecked(p => ({ ...p, [id]: !p[id] }));
 
   if (currentView === 'auth') {
-    return <AuthPage />;
+    return <AuthPage onNavigate={setCurrentView} />;
   }
   
   if (currentView === 'pricing') {
@@ -290,7 +335,11 @@ export default function App() {
                 <a className="nav-link">Docs</a>
               </div>
               <a className="nav-link" onClick={() => setCurrentView('pricing')} style={{ cursor: "pointer" }}>Pricing</a>
-              <button className="generate-btn" style={{ padding: "8px 20px", fontSize: 11 }} onClick={() => setCurrentView('auth')}>Sign in</button>
+              {user ? (
+                <button className="generate-btn" style={{ padding: "8px 20px", fontSize: 11 }} onClick={() => supabase.auth.signOut()}>Sign out</button>
+              ) : (
+                <button className="generate-btn" style={{ padding: "8px 20px", fontSize: 11 }} onClick={() => setCurrentView('auth')}>Sign in</button>
+              )}
             </div>
           </nav>
 
