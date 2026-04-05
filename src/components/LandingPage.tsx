@@ -46,7 +46,7 @@ export default function LandingPage({ onNavigate }: Props) {
           </h1>
 
           <p className="hero-sub">
-            SyncScript uses AI to summarize your meeting transcripts, extract action items, and surface what actually matters — in seconds.
+            SyncScript uses AI to summarize your meeting transcripts, extract action items, and surface what actually matters - in seconds.
           </p>
 
           <div className="hero-ctas">
@@ -62,13 +62,13 @@ export default function LandingPage({ onNavigate }: Props) {
               <div className="dot dot-r" />
               <div className="dot dot-y" />
               <div className="dot dot-g" />
-              <span style={{ fontSize: 12, color: 'var(--text-3)', marginLeft: 10 }}>Sprint Planning — April 5, 2026</span>
+              <span style={{ fontSize: 12, color: 'var(--text-3)', marginLeft: 10 }}>Sprint Planning - April 5, 2026</span>
             </div>
             <div className="preview-body">
               <div>
                 <div className="preview-label">Transcript</div>
                 <div className="preview-text">
-                  ...so we&apos;ve got the sprint capacity at 42 points. Rohan, can you pick up the auth refactor ticket? That&apos;s estimated at 8 points. Also, the API gateway work needs a review by Thursday — Priya, that&apos;s on you. Let&apos;s also move the billing fix up in priority, we&apos;ve had three client complaints this week...
+                  ...so we&apos;ve got the sprint capacity at 42 points. Rohan, can you pick up the auth refactor ticket? That&apos;s estimated at 8 points. Also, the API gateway work needs a review by Thursday - Priya, that&apos;s on you. Let&apos;s also move the billing fix up in priority, we&apos;ve had three client complaints this week...
                 </div>
               </div>
               <div className="divider-v" />
@@ -88,7 +88,7 @@ export default function LandingPage({ onNavigate }: Props) {
                 </div>
                 <div className="summary-item">
                   <div className="summary-bullet" />
-                  <span>Billing fix escalated — 3 client complaints</span>
+                  <span>Billing fix escalated - 3 client complaints</span>
                 </div>
                 <div style={{ marginTop: 14 }}>
                   <div className="preview-label">Tags</div>
@@ -102,17 +102,7 @@ export default function LandingPage({ onNavigate }: Props) {
         </div>
       </section>
 
-      <div className="logos">
-        <div className="logos-label">Trusted by teams at</div>
-        <div className="logos-inner">
-          <span>Atlassian</span>
-          <span>Notion</span>
-          <span>Linear</span>
-          <span>Vercel</span>
-          <span>Figma</span>
-          <span>Stripe</span>
-        </div>
-      </div>
+
 
       <section id="features">
         <div className="section-inner">
@@ -133,7 +123,7 @@ export default function LandingPage({ onNavigate }: Props) {
                 <svg viewBox="0 0 24 24"><path d="M8 6h13" /><path d="M8 12h13" /><path d="M8 18h13" /><path d="M3 6h.01" /><path d="M3 12h.01" /><path d="M3 18h.01" /></svg>
               </div>
               <div className="feature-title">Action Item Detection</div>
-              <div className="feature-desc">Automatically extracts tasks, owners, and deadlines from unstructured conversation — no manual tagging needed.</div>
+              <div className="feature-desc">Automatically extracts tasks, owners, and deadlines from unstructured conversation - no manual tagging needed.</div>
             </div>
             <div className="feature-card">
               <div className="feature-icon" aria-hidden>
@@ -182,7 +172,7 @@ export default function LandingPage({ onNavigate }: Props) {
             <div className="step">
               <div className="step-num">02 <div className="step-line" /></div>
               <div className="step-title">AI does the work</div>
-              <div className="step-desc">SyncScript extracts summaries, action items, decisions, and blockers — structured and ready to share.</div>
+              <div className="step-desc">SyncScript extracts summaries, action items, decisions, and blockers - structured and ready to share.</div>
             </div>
             <div className="step">
               <div className="step-num">03 <div className="step-line" /></div>
@@ -215,7 +205,7 @@ export default function LandingPage({ onNavigate }: Props) {
             </div>
 
             <div className="pricing-card featured">
-              <div className="plan-tag featured-tag">Pro — Most popular</div>
+              <div className="plan-tag featured-tag">Pro - Most popular</div>
               <div className="plan-price"><sup>₹</sup>499</div>
               <div className="plan-period">per month, billed monthly</div>
               <div className="plan-divider" />
@@ -226,7 +216,7 @@ export default function LandingPage({ onNavigate }: Props) {
                 <li>Priority AI processing</li>
                 <li>30-day history</li>
               </ul>
-              <button type="button" className="plan-cta plan-cta-accent" onClick={() => onNavigate('pricing')}>Start Pro — ₹499/mo</button>
+              <button type="button" className="plan-cta plan-cta-accent" onClick={() => onNavigate('pricing')}>Start Pro - ₹499/mo</button>
             </div>
 
             <div className="pricing-card">

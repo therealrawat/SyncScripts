@@ -366,7 +366,7 @@ export default function App() {
               <span style={{ color: "#ffffff" }}>actionable work.</span>
             </h1>
             <p className="fade-up-2 hero-text" style={{ fontSize: 17, lineHeight: 1.65, color: COLORS.textMuted, maxWidth: 480, margin: "0 auto 36px" }}>
-              Paste any conversation transcript. Get executive summaries, action items, and structured technical tasks — in seconds.
+              Paste any conversation transcript. Get executive summaries, action items, and structured technical tasks - in seconds.
             </p>
             <div className="fade-up-3" style={{ display: "flex", justifyContent: "center", gap: 20, flexWrap: "wrap" }}>
               {[
