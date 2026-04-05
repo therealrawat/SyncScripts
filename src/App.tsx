@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { GoogleGenAI } from '@google/genai';
-import AuthPage from './components/AuthPage';
-import LandingPage from './components/LandingPage';
-import PricingPage from './components/PricingPage';
-import ComingSoonPricing from './components/ComingSoonPricing';
+
+const AuthPage = lazy(() => import('./components/AuthPage'));
+const LandingPage = lazy(() => import('./components/LandingPage'));
+const PricingPage = lazy(() => import('./components/PricingPage'));
+const ComingSoonPricing = lazy(() => import('./components/ComingSoonPricing'));
 import { IconArrowRight, IconBolt, IconCheck, IconLock, IconTarget } from './components/ui-icons';
 import type { AppView } from './navigation';
 import { COLORS } from './theme';
@@ -485,7 +486,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <Suspense fallback={<SkeletonView type="summary" />}>
       <GoogleFonts />
       <div style={style.root} className="grid-bg">
         <div className="noise" />
@@ -691,6 +692,6 @@ export default function App() {
         </div>
       </div>
       {showSignInModal && <SignInModal onSignIn={handleGoogleSignIn} onClose={() => setShowSignInModal(false)} />}
-    </>
+    </Suspense>
   );
 }
