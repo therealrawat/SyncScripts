@@ -266,24 +266,10 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
               </a>
               <p>AI-powered meeting intelligence for teams that value their time.</p>
             </div>
-            <div className="footer-col">
-              <h4>Product</h4>
-              <ul>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>Changelog</a></li>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>Roadmap</a></li>
-              </ul>
-            </div>
-            
-            <div className="footer-col">
-              <h4>Company</h4>
-              <ul>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>About</a></li>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>Blog</a></li>
-                <li><a onClick={() => onNavigate('privacy')} style={{ cursor: 'pointer' }}>Privacy</a></li>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>Terms</a></li>
-              </ul>
+            <div className="footer-links-simple">
+              <a href="/" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Home</a>
+              <a href="https://priyanshurawat.co.in" target="_blank" rel="noopener noreferrer">Founder</a>
+              <a onClick={() => onNavigate('privacy')} style={{ cursor: 'pointer' }}>Privacy</a>
             </div>
           </div>
           <div className="footer-bottom">
