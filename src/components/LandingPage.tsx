@@ -41,11 +41,6 @@ export default function LandingPage({ onNavigate }: Props) {
           <div className="glow-orb" />
           <div className="glow-orb" />
 
-          <div className="badge">
-            <span className="badge-dot" />
-            Now with AI action item detection &nbsp;·&nbsp; New
-          </div>
-
           <h1 className="hero-headline">
             Turn meetings into<br /><span>clear decisions.</span>
           </h1>

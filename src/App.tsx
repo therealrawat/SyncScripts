@@ -360,10 +360,7 @@ export default function App() {
 
           {/* HERO */}
           <div className="hero-container" style={{ textAlign: "center", padding: "120px 24px 48px", maxWidth: 780, margin: "0 auto" }}>
-            <div className="fade-up" style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 28, padding: "5px 12px", border: `1px solid ${COLORS.border}`, borderRadius: 99, fontSize: 12, color: COLORS.textMuted, background: COLORS.surface }}>
-              <div className="pulse-dot" />
-              <span>AI meeting intelligence · Beta</span>
-            </div>
+
             <h1 className="fade-up-1 hero-title" style={{ fontFamily: "'Figtree', sans-serif", fontSize: "clamp(40px, 6vw, 72px)", fontWeight: 800, letterSpacing: "-3px", lineHeight: 1.0, marginBottom: 20, color: "#ffffff" }}>
               Turn meetings into<br />
               <span style={{ color: "#ffffff" }}>actionable work.</span>
