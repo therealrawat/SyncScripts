@@ -27,7 +27,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
             <li><a href="#features">Features</a></li>
             <li><a href="#how">How it works</a></li>
             <li><a onClick={() => onNavigate('coming-soon-pricing')} style={{ cursor: 'pointer' }}>Pricing</a></li>
-            <li><a href="#" onClick={(e) => e.preventDefault()}>Blog</a></li>
+            <li><a onClick={() => onNavigate('privacy')} style={{ cursor: 'pointer' }}>Privacy</a></li>
           </ul>
           <div className="nav-actions">
             <button type="button" className="btn-ghost" onClick={onSignIn}>Sign in</button>
