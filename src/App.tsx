@@ -389,6 +389,16 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  const handleGoogleSignIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+    if (error) alert(error.message);
+  };
   
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -407,7 +417,7 @@ export default function App() {
   }
 
   if (currentView === 'landing') {
-    return <LandingPage onNavigate={setCurrentView} />;
+    return <LandingPage onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} />;
   }
 
   return (
@@ -435,7 +445,7 @@ export default function App() {
                 {user ? (
                   <button className="generate-btn" style={{ padding: "7px 16px", fontSize: 14 }} onClick={() => supabase.auth.signOut()}>Sign out</button>
                 ) : (
-                  <button className="generate-btn" style={{ padding: "7px 16px", fontSize: 14 }} onClick={() => setCurrentView('auth')}>Sign in</button>
+                  <button className="generate-btn" style={{ padding: "7px 16px", fontSize: 14 }} onClick={handleGoogleSignIn}>Sign in</button>
                 )}
               </div>
             </div>
