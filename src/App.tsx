@@ -345,10 +345,10 @@ export default function App() {
               </div>
               <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: 24 }}>
                 <div className="nav-desktop-links" style={{ display: "flex", gap: 4 }}>
-                  <a className="nav-link">How it works</a>
-                  <a className="nav-link">Docs</a>
+                  <a className="nav-link" onClick={() => setCurrentView('landing')} style={{ cursor: "pointer" }}>How it works</a>
+                  <a className="nav-link" onClick={() => setCurrentView('landing')} style={{ cursor: "pointer" }}>Docs</a>
                 </div>
-                <a className="nav-link" onClick={() => setCurrentView('pricing')} style={{ cursor: "pointer" }}>Pricing</a>
+
                 {user ? (
                   <button className="generate-btn" style={{ padding: "7px 16px", fontSize: 14 }} onClick={() => supabase.auth.signOut()}>Sign out</button>
                 ) : (
