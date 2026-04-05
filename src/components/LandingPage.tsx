@@ -31,7 +31,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
           </ul>
           <div className="nav-actions">
             <button type="button" className="btn-ghost" onClick={onSignIn}>Sign in</button>
-            <button type="button" className="btn-primary" onClick={onSignIn}>
+            <button type="button" className="btn-primary" onClick={() => onNavigate('app')}>
               Get started free
               <ArrowIcon />
             </button>
@@ -53,7 +53,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
           </p>
 
           <div className="hero-ctas">
-            <button type="button" className="btn-primary btn-lg" onClick={onSignIn}>
+            <button type="button" className="btn-primary btn-lg" onClick={() => onNavigate('app')}>
               Start for free
               <ArrowIcon />
             </button>
@@ -204,7 +204,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
                 <li>Copy &amp; paste export</li>
                 <li>7-day history</li>
               </ul>
-              <button type="button" className="plan-cta plan-cta-ghost" onClick={onSignIn}>Get started free</button>
+              <button type="button" className="plan-cta plan-cta-ghost" onClick={() => onNavigate('app')}>Get started free</button>
             </div>
 
             <div className="pricing-card featured">
@@ -247,7 +247,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
           <p className="cta-sub">Join 2,000+ teams already using SyncScript.</p>
           <div className="input-row">
             <input type="email" className="email-input" placeholder="you@company.com" aria-label="Work email" />
-            <button type="button" className="btn-primary btn-lg" onClick={onSignIn}>
+            <button type="button" className="btn-primary btn-lg" onClick={() => onNavigate('app')}>
               Get started
               <ArrowIcon />
             </button>

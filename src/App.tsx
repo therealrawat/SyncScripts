@@ -302,8 +302,8 @@ const SkeletonView = ({ type }: { type: string }) => {
 const SignInModal = ({ onSignIn, onClose }: { onSignIn: () => void, onClose: () => void }) => (
   <div className="modal-overlay" onClick={onClose}>
     <div className="modal-card" onClick={e => e.stopPropagation()}>
-      <img src={logoIcon} alt="" style={{ width: 64, height: 64, marginBottom: 32 }} />
-      <h2 style={{ fontSize: 26, fontWeight: 800, color: "white", marginBottom: 12, letterSpacing: "-0.5px" }}>You've used your free meetings</h2>
+      <img src={logoIcon} alt="" style={{ width: 64, height: 64, margin: "0 auto 32px", display: "block" }} />
+      <h2 style={{ fontSize: 26, fontWeight: 800, color: "white", marginBottom: 12, letterSpacing: "-0.5px" }}>You've reached your free limit</h2>
       <p style={{ fontSize: 15, color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
         Sign in with Google to continue summarizing.<br />It's free, takes 2 seconds.
       </p>
