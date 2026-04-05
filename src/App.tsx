@@ -157,6 +157,17 @@ const GoogleFonts = () => (
     .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
     .scrollbar-thin::-webkit-scrollbar-thumb { background: ${COLORS.border}; border-radius: 4px; }
 
+    @keyframes skeleton-blink {
+      0% { opacity: 0.1; }
+      50% { opacity: 0.25; }
+      100% { opacity: 0.1; }
+    }
+    .skeleton {
+      background: var(--text);
+      border-radius: 4px;
+      animation: skeleton-blink 1.5s ease-in-out infinite;
+    }
+
     /* Mobile Responsiveness */
     @media (max-width: 768px) {
       .nav-desktop-links { display: none !important; }
@@ -181,6 +192,76 @@ interface MockResult {
   actions: { id: number; text: string; owner: string; priority: string }[];
   tasks: { id: number; title: string; type: string; estimate: string; assignee: string }[];
 }
+
+// --- SKELETON LOADER ---
+const SkeletonView = ({ type }: { type: string }) => {
+  if (type === "summary") {
+    return (
+      <div className="fade-up">
+        <div className="result-card">
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <div className="skeleton" style={{ width: 120, height: 20 }} />
+            <div className="skeleton" style={{ width: 80, height: 24 }} />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="skeleton" style={{ width: "100%", height: 14 }} />
+            <div className="skeleton" style={{ width: "95%", height: 14 }} />
+            <div className="skeleton" style={{ width: "98%", height: 14 }} />
+            <div className="skeleton" style={{ width: "60%", height: 14 }} />
+          </div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
+          <div className="result-card">
+            <div className="skeleton" style={{ width: 100, height: 10, marginBottom: 12 }} />
+            <div className="skeleton" style={{ width: 40, height: 32 }} />
+          </div>
+          <div className="result-card">
+            <div className="skeleton" style={{ width: 100, height: 10, marginBottom: 12 }} />
+            <div className="skeleton" style={{ width: 40, height: 32 }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (type === "actions") {
+    return (
+      <div className="fade-up result-card" style={{ padding: "0 20px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${COLORS.border}`, padding: "20px 0" }}>
+          <div className="skeleton" style={{ width: 100, height: 20 }} />
+          <div className="skeleton" style={{ width: 80, height: 12 }} />
+        </div>
+        <div style={{ padding: "10px 0" }}>
+          {[1, 2, 3].map(i => (
+            <div key={i} className="action-item">
+              <div className="skeleton" style={{ width: 16, height: 16, borderRadius: 3, marginTop: 2 }} />
+              <div style={{ flex: 1 }}>
+                <div className="skeleton" style={{ width: "85%", height: 13, marginBottom: 10 }} />
+                <div style={{ display: "flex", gap: 8 }}>
+                  <div className="skeleton" style={{ width: 50, height: 10 }} />
+                  <div className="skeleton" style={{ width: 60, height: 14 }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fade-up">
+      {[1, 2, 3, 4].map(i => (
+        <div key={i} className="result-card" style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div className="skeleton" style={{ width: 60, height: 20 }} />
+          <div className="skeleton" style={{ flex: 1, height: 14 }} />
+          <div className="skeleton" style={{ width: 50, height: 12 }} />
+          <div className="skeleton" style={{ width: 40, height: 20 }} />
+        </div>
+      ))}
+    </div>
+  );
+};
 
 // --- MAIN APP COMPONENT ---
 export default function App() {
@@ -250,6 +331,8 @@ export default function App() {
 
     if (!transcript.trim()) return;
     setLoading(true);
+    setTab("result");
+    setResultTab("summary");
 
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -424,18 +507,18 @@ export default function App() {
               )}
 
               {/* Result panel */}
-              {tab === "result" && result && (
+              {tab === "result" && (result || loading) && (
                 <div style={{ padding: 24 }} className="fade-up">
                   <div style={{ display: "flex", gap: 4, marginBottom: 24 }}>
                     {[
                       { key: "summary", label: "Summary", badge: "badge-teal" },
-                      { key: "actions", label: `Actions (${result.actions.length})`, badge: "badge-green" },
-                      { key: "tasks", label: `Tasks (${result.tasks.length})`, badge: "badge-indigo" }
+                      { key: "actions", label: `Actions (${result?.actions.length || 0})`, badge: "badge-green" },
+                      { key: "tasks", label: `Tasks (${result?.tasks.length || 0})`, badge: "badge-indigo" }
                     ].map(t => (
-                      <button key={t.key} className={`tab-btn ${resultTab === t.key ? "active" : "inactive"}`} onClick={() => setResultTab(t.key)}>{t.label}</button>
+                      <button key={t.key} className={`tab-btn ${resultTab === t.key ? "active" : "inactive"}`} onClick={() => result && setResultTab(t.key)} disabled={loading} style={{ opacity: loading && t.key !== resultTab ? 0.5 : 1 }}>{t.label}</button>
                     ))}
                     <div style={{ flex: 1 }} />
-                    <button className="copy-btn" onClick={() => handleCopy(JSON.stringify(result, null, 2))} style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <button className="copy-btn" onClick={() => handleCopy(JSON.stringify(result, null, 2))} disabled={loading} style={{ display: "inline-flex", alignItems: "center", gap: 6, opacity: loading ? 0.5 : 1 }}>
                       {copied ? (
                         <>
                           <IconCheck size={12} aria-hidden />
@@ -447,70 +530,76 @@ export default function App() {
                     </button>
                   </div>
 
-                  {/* Summary */}
-                  {resultTab === "summary" && (
-                    <div className="fade-up">
-                      <div className="result-card">
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-                          <span className="badge badge-teal">Executive Summary</span>
-                          <button className="copy-btn" onClick={() => handleCopy(result.summary)}>Copy text</button>
-                        </div>
-                        <p style={{ fontSize: 14, lineHeight: 1.75, color: COLORS.text }}>{result.summary}</p>
-                      </div>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
-                        <div className="result-card">
-                          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: COLORS.textDim, marginBottom: 8 }}>Actionable Items</div>
-                          <div style={{ fontFamily: "'Figtree', sans-serif", fontSize: 32, fontWeight: 800, letterSpacing: "-1px", color: COLORS.text }}>{result.actions.length}</div>
-                        </div>
-                        <div className="result-card">
-                          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: COLORS.textDim, marginBottom: 8 }}>Engineering Tasks</div>
-                          <div style={{ fontFamily: "'Figtree', sans-serif", fontSize: 32, fontWeight: 800, letterSpacing: "-1px", color: COLORS.accentDim }}>{result.tasks.length}</div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  {resultTab === "actions" && (
-                    <div className="fade-up result-card" style={{ padding: "0 20px" }}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${COLORS.border}`, padding: "20px 0" }}>
-                        <span className="badge badge-green">Action Items</span>
-                        <span style={{ fontSize: 10, color: COLORS.textMuted, letterSpacing: "0.08em" }}>{Object.values(checked).filter(Boolean).length}/{result.actions.length} Completed</span>
-                      </div>
-                      <div style={{ padding: "10px 0" }}>
-                        {result.actions.map(a => {
-                          const p = PRIORITY_STYLES[a.priority] || PRIORITY_STYLES.medium;
-                          return (
-                            <div key={a.id} className="action-item">
-                              <div className={`action-check ${checked[a.id] ? "checked" : ""}`} onClick={() => toggleCheck(a.id)}>
-                                {checked[a.id] && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-                              </div>
-                              <div style={{ flex: 1 }}>
-                                <p style={{ fontSize: 13, lineHeight: 1.6, color: checked[a.id] ? COLORS.textDim : COLORS.text, textDecoration: checked[a.id] ? "line-through" : "none", marginBottom: 6 }}>{a.text}</p>
-                                <div style={{ display: "flex", gap: 8 }}>
-                                  <span style={{ fontSize: 10, color: COLORS.textMuted }}>@{a.owner}</span>
-                                  <span style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: p.color, background: p.bg, border: `1px solid ${p.border}`, padding: "1px 7px", borderRadius: 3 }}>{a.priority}</span>
-                                </div>
-                              </div>
+                  {loading ? (
+                    <SkeletonView type={resultTab} />
+                  ) : result && (
+                    <>
+                      {/* Summary */}
+                      {resultTab === "summary" && (
+                        <div className="fade-up">
+                          <div className="result-card">
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+                              <span className="badge badge-teal">Executive Summary</span>
+                              <button className="copy-btn" onClick={() => handleCopy(result.summary)}>Copy text</button>
                             </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Tasks */}
-                  {resultTab === "tasks" && (
-                    <div className="fade-up">
-                      {result.tasks.map(t => (
-                        <div key={t.id} className="result-card" style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                          <span className={`badge ${TYPE_BADGE[t.type] || "badge-teal"}`}>{t.type}</span>
-                          <span style={{ flex: 1, fontSize: 13, color: COLORS.text }}>{t.title}</span>
-                          <span style={{ fontSize: 11, color: COLORS.textMuted }}>@{t.assignee}</span>
-                          <span style={{ fontSize: 11, color: COLORS.accentDim, background: COLORS.accentGlow, border: "1px solid rgba(255,255,255,0.12)", padding: "3px 10px", borderRadius: 5 }}>{t.estimate}</span>
+                            <p style={{ fontSize: 14, lineHeight: 1.75, color: COLORS.text }}>{result.summary}</p>
+                          </div>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 12 }}>
+                            <div className="result-card">
+                              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: COLORS.textDim, marginBottom: 8 }}>Actionable Items</div>
+                              <div style={{ fontFamily: "'Figtree', sans-serif", fontSize: 32, fontWeight: 800, letterSpacing: "-1px", color: COLORS.text }}>{result.actions.length}</div>
+                            </div>
+                            <div className="result-card">
+                              <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: COLORS.textDim, marginBottom: 8 }}>Engineering Tasks</div>
+                              <div style={{ fontFamily: "'Figtree', sans-serif", fontSize: 32, fontWeight: 800, letterSpacing: "-1px", color: COLORS.accentDim }}>{result.tasks.length}</div>
+                            </div>
+                          </div>
                         </div>
-                      ))}
-                    </div>
+                      )}
+
+                      {/* Actions */}
+                      {resultTab === "actions" && (
+                        <div className="fade-up result-card" style={{ padding: "0 20px" }}>
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `1px solid ${COLORS.border}`, padding: "20px 0" }}>
+                            <span className="badge badge-green">Action Items</span>
+                            <span style={{ fontSize: 10, color: COLORS.textMuted, letterSpacing: "0.08em" }}>{Object.values(checked).filter(Boolean).length}/{result.actions.length} Completed</span>
+                          </div>
+                          <div style={{ padding: "10px 0" }}>
+                            {result.actions.map(a => {
+                              const p = PRIORITY_STYLES[a.priority] || PRIORITY_STYLES.medium;
+                              return (
+                                <div key={a.id} className="action-item">
+                                  <div className={`action-check ${checked[a.id] ? "checked" : ""}`} onClick={() => toggleCheck(a.id)}>
+                                    {checked[a.id] && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                                  </div>
+                                  <div style={{ flex: 1 }}>
+                                    <p style={{ fontSize: 13, lineHeight: 1.6, color: checked[a.id] ? COLORS.textDim : COLORS.text, textDecoration: checked[a.id] ? "line-through" : "none", marginBottom: 6 }}>{a.text}</p>
+                                    <div style={{ display: "flex", gap: 8 }}>
+                                      <span style={{ fontSize: 10, color: COLORS.textMuted }}>@{a.owner}</span>
+                                      <span style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: p.color, background: p.bg, border: `1px solid ${p.border}`, padding: "1px 7px", borderRadius: 3 }}>{a.priority}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Tasks */}
+                      {resultTab === "tasks" && (
+                        <div className="fade-up">
+                          {result.tasks.map(t => (
+                            <div key={t.id} className="result-card" style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                              <span className={`badge ${TYPE_BADGE[t.type] || "badge-teal"}`}>{t.type}</span>
+                              <span style={{ flex: 1, fontSize: 13, color: COLORS.text }}>{t.title}</span>
+                              <span style={{ fontSize: 11, color: COLORS.textMuted }}>@{t.assignee}</span>
+                              <span style={{ fontSize: 11, color: COLORS.accentDim, background: COLORS.accentGlow, border: "1px solid rgba(255,255,255,0.12)", padding: "3px 10px", borderRadius: 5 }}>{t.estimate}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )}
