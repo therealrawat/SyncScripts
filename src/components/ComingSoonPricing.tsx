@@ -587,7 +587,7 @@ export default function ComingSoonPricing({ onNavigate, onSignIn }: Props) {
           <div className="plan-ghost">
             <LockIcon />
             <div className="plan-ghost-name">Pro</div>
-            <div className="plan-ghost-price">₹499</div>
+            <div className="plan-ghost-price">₹399</div>
             <div className="plan-ghost-label">/ month</div>
           </div>
           <div className="plan-ghost">

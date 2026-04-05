@@ -194,7 +194,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
 
           <div className="pricing-grid">
             <div className="pricing-card">
-              <div className="plan-tag">Free</div>
+              <div className="plan-tag featured-tag">Free - Beta</div>
               <div className="plan-price"><sup>₹</sup>0</div>
               <div className="plan-period">forever</div>
               <div className="plan-divider" />
@@ -208,8 +208,8 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
             </div>
 
             <div className="pricing-card featured">
-              <div className="plan-tag featured-tag">Pro - Most popular</div>
-              <div className="plan-price"><sup>₹</sup>499</div>
+              <div className="plan-tag">Pro</div>
+              <div className="plan-price"><sup>₹</sup>399</div>
               <div className="plan-period">per month, billed monthly</div>
               <div className="plan-divider" />
               <ul className="plan-features">
