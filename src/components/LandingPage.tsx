@@ -273,7 +273,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© 2026 SyncScript. Made in India.</p>
+            <p>© 2026 SyncScript. Priyanshu Rawat. All rights reserved.</p>
             <p style={{ color: 'var(--text-3)' }}>syncscripts.netlify.app</p>
           </div>
         </div>
