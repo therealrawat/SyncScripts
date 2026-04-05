@@ -800,6 +800,7 @@ footer {
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .nav-links { display: none; }
+  .hide-on-mobile { display: none !important; }
   .footer-top { grid-template-columns: 1fr 1fr; }
   .preview-body { grid-template-columns: 1fr; }
   .divider-v { display: none; }

@@ -31,7 +31,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
           </ul>
           <div className="nav-actions">
             <button type="button" className="btn-ghost" onClick={onSignIn}>Sign in</button>
-            <button type="button" className="btn-primary" onClick={() => onNavigate('app')}>
+            <button type="button" className="btn-primary hide-on-mobile" onClick={() => onNavigate('app')}>
               Get started free
               <ArrowIcon />
             </button>
