@@ -275,20 +275,13 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
                 <li><a href="#" onClick={(e) => e.preventDefault()}>Roadmap</a></li>
               </ul>
             </div>
-            <div className="footer-col">
-              <h4>Developers</h4>
-              <ul>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>API Docs</a></li>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>Integrations</a></li>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>Status</a></li>
-              </ul>
-            </div>
+            
             <div className="footer-col">
               <h4>Company</h4>
               <ul>
                 <li><a href="#" onClick={(e) => e.preventDefault()}>About</a></li>
                 <li><a href="#" onClick={(e) => e.preventDefault()}>Blog</a></li>
-                <li><a href="#" onClick={(e) => e.preventDefault()}>Privacy</a></li>
+                <li><a onClick={() => onNavigate('privacy')} style={{ cursor: 'pointer' }}>Privacy</a></li>
                 <li><a href="#" onClick={(e) => e.preventDefault()}>Terms</a></li>
               </ul>
             </div>
