@@ -721,7 +721,7 @@ export default function PrivacyPage({ onNavigate }: Props) {
       </div>
 
       <footer>
-        <p>© 2026 SyncScript. Made in India. Priyanshu Rawat. All rights reserved.</p>
+        <p>© 2026 SyncScript. . Priyanshu Rawat. All rights reserved.</p>
       </footer>
     </div>
   );

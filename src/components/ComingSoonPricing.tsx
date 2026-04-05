@@ -660,7 +660,7 @@ export default function ComingSoonPricing({ onNavigate, onSignIn }: Props) {
         <p>
           <a onClick={() => onNavigate('landing')} style={{ cursor: 'pointer' }}>← Back to SyncScript</a>
           &nbsp;·&nbsp;
-          © 2026 SyncScript. Made in India. Priyanshu Rawat. All rights reserved.
+          © 2026 SyncScript. . Priyanshu Rawat. All rights reserved.
         </p>
       </footer>
     </div>
