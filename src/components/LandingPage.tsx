@@ -26,7 +26,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
           <ul className="nav-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#how">How it works</a></li>
-            <li><a href="#pricing">Pricing</a></li>
+            <li><a onClick={() => onNavigate('coming-soon-pricing')} style={{ cursor: 'pointer' }}>Pricing</a></li>
             <li><a href="#" onClick={(e) => e.preventDefault()}>Blog</a></li>
           </ul>
           <div className="nav-actions">
@@ -199,7 +199,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
               <div className="plan-period">forever</div>
               <div className="plan-divider" />
               <ul className="plan-features">
-                <li>10 summaries / month</li>
+                <li>5 summaries / month</li>
                 <li>Action item detection</li>
                 <li>Copy &amp; paste export</li>
                 <li>7-day history</li>
@@ -219,7 +219,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
                 <li>Priority AI processing</li>
                 <li>30-day history</li>
               </ul>
-              <button type="button" className="plan-cta plan-cta-accent" onClick={() => onNavigate('pricing')}>Start Pro - ₹499/mo</button>
+              <button type="button" className="plan-cta plan-cta-accent" onClick={() => onNavigate('coming-soon-pricing')}>Start Pro - ₹499/mo</button>
             </div>
 
             <div className="pricing-card">
@@ -234,7 +234,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
                 <li>Unlimited history</li>
                 <li>Priority support</li>
               </ul>
-              <button type="button" className="plan-cta plan-cta-ghost" onClick={() => onNavigate('pricing')}>Start Team plan</button>
+              <button type="button" className="plan-cta plan-cta-ghost" onClick={() => onNavigate('coming-soon-pricing')}>Start Team plan</button>
             </div>
           </div>
         </div>

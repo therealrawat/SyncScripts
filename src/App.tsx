@@ -3,6 +3,7 @@ import { GoogleGenAI } from '@google/genai';
 import AuthPage from './components/AuthPage';
 import LandingPage from './components/LandingPage';
 import PricingPage from './components/PricingPage';
+import ComingSoonPricing from './components/ComingSoonPricing';
 import { IconArrowRight, IconBolt, IconCheck, IconLock, IconTarget } from './components/ui-icons';
 import type { AppView } from './navigation';
 import { COLORS } from './theme';
@@ -477,6 +478,10 @@ export default function App() {
 
   if (currentView === 'landing') {
     return <LandingPage onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} />;
+  }
+
+  if (currentView === 'coming-soon-pricing') {
+    return <ComingSoonPricing onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} />;
   }
 
   return (

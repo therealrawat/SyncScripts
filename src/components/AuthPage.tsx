@@ -41,7 +41,7 @@ const AuthGoogleFonts = () => (
   `}</style>
 );
 
-export default function AuthPage({ }: { onNavigate?: (view: AppView) => void }) {
+export default function AuthPage({ onNavigate }: { onNavigate?: (view: AppView) => void }) {
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleGoogleSignIn = async () => {
