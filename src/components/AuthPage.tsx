@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { COLORS } from '../theme';
 import logoIcon from '../assets/logo.svg';
+import { IconBolt, IconLock, IconTarget } from './ui-icons';
+import type { AppView } from '../navigation';
 import { supabase } from '../supabase';
 
 const AuthGoogleFonts = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap');
     
     .auth-bg { background-color: ${COLORS.bg}; }
     .auth-surface { background-color: ${COLORS.surface}; border-color: ${COLORS.border}; }
     
     .grid-bg-auth { 
-      background-image: linear-gradient(rgba(26,40,64,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(26,40,64,0.6) 1px, transparent 1px);
-      background-size: 40px 40px;
+      background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
     }
     
     .noise-auth {
@@ -22,8 +24,8 @@ const AuthGoogleFonts = () => (
     
     .glow-orb-auth { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
     
-    .syne-font { font-family: 'Syne', sans-serif; }
-    .dm-mono { font-family: 'DM Mono', monospace; }
+    .syne-font { font-family: 'Figtree', sans-serif; }
+    .dm-mono { font-family: 'Figtree', sans-serif; }
     
     .social-btn {
       background: ${COLORS.surface};
@@ -39,7 +41,7 @@ const AuthGoogleFonts = () => (
   `}</style>
 );
 
-export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | 'auth' | 'pricing') => void }) {
+export default function AuthPage({ onNavigate }: { onNavigate?: (view: AppView) => void }) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -71,9 +73,9 @@ export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | '
   return (
     <>
       <AuthGoogleFonts />
-      <div className="min-h-screen text-[#E8EEF8] flex flex-col md:flex-row dm-mono auth-bg">
+      <div className="min-h-screen text-[#FAFAFA] flex flex-col md:flex-row dm-mono auth-bg">
         {/* Left Column - Login Form */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 md:p-16 lg:px-24 border-r border-[#1A2840] relative z-10 bg-[#0E1525]">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 md:p-16 lg:px-24 border-r relative z-10" style={{ borderColor: COLORS.borderSoft, background: COLORS.surface }}>
           <div className="w-full max-w-[340px] flex flex-col items-center">
             
             {/* SyncScript Logo */}
@@ -83,7 +85,7 @@ export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | '
             </div>
 
             <h1 className="syne-font text-[28px] font-bold mb-4 tracking-tight">{isLogin ? "Welcome Back" : "Create Account"}</h1>
-            <p className="text-[11px] text-[#5A7090] mb-8 font-medium tracking-widest uppercase">Select an option to {isLogin ? "login" : "sign up"}</p>
+            <p className="text-[11px] mb-8 font-medium tracking-widest uppercase" style={{ color: COLORS.textDim }}>Select an option to {isLogin ? "login" : "sign up"}</p>
 
             <div className="w-full space-y-3 mb-8">
               <SocialButton icon={<GoogleIcon />} label={isLogin ? "Continue with Google" : "Sign up with Google"} />
@@ -93,8 +95,8 @@ export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | '
             </div>
 
             <div className="w-full flex flex-col items-center gap-4 mb-10 mt-6 md:mt-0">
-              <div className="w-full h-[1px] bg-[#1A2840] relative">
-                <span className="absolute left-1/2 -top-[10px] -translate-x-1/2 px-4 bg-[#0E1525] text-[#5A7090] text-[10px] tracking-widest font-bold uppercase">or email</span>
+              <div className="w-full h-[1px] relative" style={{ background: COLORS.border }}>
+                <span className="absolute left-1/2 -top-[10px] -translate-x-1/2 px-4 text-[10px] tracking-widest font-bold uppercase" style={{ background: COLORS.surface, color: COLORS.textDim }}>or email</span>
               </div>
             </div>
 
@@ -104,7 +106,10 @@ export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | '
                 placeholder="Email address"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-[rgba(0,0,0,0.3)] border border-[#1A2840] rounded-md px-4 py-3 text-[13px] text-[#E8EEF8] focus:border-[#0090BB] focus:outline-none transition-colors"
+                className="w-full rounded-md px-4 py-3 text-[13px] focus:outline-none transition-colors"
+                style={{ background: COLORS.bg, border: `1px solid ${COLORS.border}`, color: COLORS.text }}
+                onFocus={e => { e.target.style.borderColor = COLORS.accent; }}
+                onBlur={e => { e.target.style.borderColor = COLORS.border; }}
                 autoComplete="email"
               />
               <input
@@ -112,7 +117,10 @@ export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | '
                 placeholder="Password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-[rgba(0,0,0,0.3)] border border-[#1A2840] rounded-md px-4 py-3 text-[13px] text-[#E8EEF8] focus:border-[#0090BB] focus:outline-none transition-colors"
+                className="w-full rounded-md px-4 py-3 text-[13px] focus:outline-none transition-colors"
+                style={{ background: COLORS.bg, border: `1px solid ${COLORS.border}`, color: COLORS.text }}
+                onFocus={e => { e.target.style.borderColor = COLORS.accent; }}
+                onBlur={e => { e.target.style.borderColor = COLORS.border; }}
                 onKeyDown={e => e.key === 'Enter' && handleAuth()}
                 autoComplete={isLogin ? "current-password" : "new-password"}
               />
@@ -126,24 +134,28 @@ export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | '
               <button 
                 onClick={handleAuth}
                 disabled={loading}
-                className={`w-full bg-gradient-to-r from-[#00C8FF] to-[#7C6EFA] hover:opacity-90 text-[#080C18] font-bold text-[12px] uppercase tracking-wide py-3 rounded-md transition-all mt-2 ${loading ? 'opacity-70 cursor-wait' : ''}`}
+                className={`w-full hover:opacity-90 font-semibold text-[13px] py-3 rounded-md transition-all mt-2 ${loading ? 'opacity-70 cursor-wait' : ''}`}
+                style={{ background: COLORS.accent, color: COLORS.onAccent }}
               >
                 {loading ? "Processing..." : (isLogin ? "Sign In" : "Create Account")}
               </button>
             </div>
 
-            <div className="text-[11px] text-[#5A7090] mb-10 flex flex-col items-center gap-1.5 tracking-widest uppercase font-medium">
+            <div className="text-[11px] mb-10 flex flex-col items-center gap-1.5 tracking-widest uppercase font-medium" style={{ color: COLORS.textDim }}>
               <span>{isLogin ? "No account yet?" : "Already have an account?"}</span>
               <button 
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-[#00E5A0] hover:text-[#E8EEF8] transition-colors mt-1"
+                className="transition-colors mt-1"
+                style={{ color: COLORS.textMuted }}
+                onMouseEnter={e => { e.currentTarget.style.color = COLORS.text; }}
+                onMouseLeave={e => { e.currentTarget.style.color = COLORS.textMuted; }}
               >
                 {isLogin ? "Sign up" : "Log in"}
               </button>
             </div>
 
-            <p className="text-[10px] text-[#3A5070] text-center max-w-[280px] leading-relaxed uppercase tracking-wider">
-              By continuing, you agree to our <a href="#" className="underline hover:text-[#5A7090] transition-colors">terms of service</a> and <a href="#" className="underline hover:text-[#5A7090] transition-colors">privacy policy</a>.
+            <p className="text-[10px] text-center max-w-[280px] leading-relaxed uppercase tracking-wider" style={{ color: COLORS.textDim }}>
+              By continuing, you agree to our <a href="#" className="underline transition-colors" style={{ color: COLORS.textMuted }}>terms of service</a> and <a href="#" className="underline transition-colors" style={{ color: COLORS.textMuted }}>privacy policy</a>.
             </p>
           </div>
         </div>
@@ -151,29 +163,29 @@ export default function AuthPage({ onNavigate }: { onNavigate?: (view: 'app' | '
         {/* Right Column - Features */}
         <div className="hidden md:flex flex-[1.2] relative overflow-hidden p-12 lg:p-24 flex-col justify-center grid-bg-auth">
           <div className="noise-auth" />
-          <div className="glow-orb-auth" style={{ width: 600, height: 600, top: -200, right: -100, background: "rgba(0,200,255,0.03)" }} />
-          <div className="glow-orb-auth" style={{ width: 500, height: 500, bottom: -100, left: -200, background: "rgba(124,110,250,0.03)" }} />
+          <div className="glow-orb-auth" style={{ width: 600, height: 600, top: -200, right: -100, background: "rgba(255, 255, 255, 0.06)" }} />
+          <div className="glow-orb-auth" style={{ width: 500, height: 500, bottom: -100, left: -200, background: "rgba(255, 255, 255, 0.04)" }} />
           
           <div className="relative z-10 max-w-md ml-auto mr-auto lg:ml-0 space-y-12 pl-4 lg:pl-16">
             <FeatureItem 
-              icon="⚡"
-              color="#00C8FF"
+              icon={<IconBolt size={22} style={{ color: COLORS.text }} />}
               title="Instant processing"
               description="Turn hours of meeting transcripts into structured actionable insights in just seconds using AI."
+              titleColor={COLORS.text}
             />
             
             <FeatureItem 
-              icon="🎯"
-              color="#00E5A0"
+              icon={<IconTarget size={22} style={{ color: COLORS.textMuted }} />}
               title="JIRA-ready actions"
               description="Extract beautifully formatted engineering tasks, tracked bug reports, and clear to-do lists seamlessly."
+              titleColor={COLORS.textMuted}
             />
             
             <FeatureItem 
-              icon="🔒"
-              color="#7C6EFA"
+              icon={<IconLock size={22} style={{ color: COLORS.accentDim }} />}
               title="Secure & Private"
               description="We respect your data. Your internal discussions remain totally confidential and are never persisted."
+              titleColor={COLORS.accentDim}
             />
           </div>
         </div>
@@ -194,15 +206,15 @@ function SocialButton({ icon, label }: { icon: React.ReactNode, label: string })
   );
 }
 
-function FeatureItem({ icon, title, description, color }: { icon: string, title: string, description: string, color: string }) {
+function FeatureItem({ icon, title, description, titleColor }: { icon: React.ReactNode; title: string; description: string; titleColor: string }) {
   return (
     <div className="flex gap-4 sm:gap-6">
-      <div className="flex-shrink-0 mt-1" style={{ fontSize: 22 }}>
+      <div className="flex-shrink-0 mt-0.5 flex items-center justify-center w-10 h-10 rounded-[10px]" style={{ background: COLORS.accentGlow }}>
         {icon}
       </div>
       <div className="flex-1">
-        <h3 className="syne-font text-[17px] font-bold mb-2 tracking-wide" style={{ color }}>{title}</h3>
-        <p className="text-[13px] text-[#5A7090] leading-[1.7] font-normal tracking-wide">
+        <h3 className="syne-font text-[17px] font-bold mb-2 tracking-wide" style={{ color: titleColor }}>{title}</h3>
+        <p className="text-[13px] leading-[1.7] font-normal tracking-wide" style={{ color: COLORS.textMuted }}>
           {description}
         </p>
       </div>

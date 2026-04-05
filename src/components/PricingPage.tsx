@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import type { AppView } from '../navigation';
+import { supabase } from '../supabase';
 import { COLORS } from '../theme';
 import logoIcon from '../assets/logo.svg';
 
@@ -7,9 +10,92 @@ const CheckIcon = () => (
   </svg>
 );
 
-export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' | 'auth' | 'pricing') => void }) {
+export default function PricingPage({ onNavigate }: { onNavigate: (view: AppView) => void }) {
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleUpgrade = async (plan: 'pro' | 'team') => {
+    try {
+      setLoadingPlan(plan);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert("Please log in first before upgrading!");
+        onNavigate('auth');
+        return;
+      }
+      
+      const userId = session.user.id;
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) throw new Error("Razorpay SDK failed to load. Check your connection.");
+
+      // Fetch order from our express backend
+      const orderRes = await fetch('http://localhost:3001/api/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan, userId })
+      });
+      const orderData = await orderRes.json();
+      if (!orderRes.ok) throw new Error(orderData.error);
+
+      // Initialize Razorpay Options
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "test_key",
+        amount: orderData.amount,
+        currency: "INR",
+        name: "SyncScript",
+        description: `Upgrade to ${plan.toUpperCase()} Plan`,
+        order_id: orderData.orderId,
+        handler: async function (response: any) {
+          try {
+            const verifyRes = await fetch('http://localhost:3001/api/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan,
+                userId
+              })
+            });
+            const verifyData = await verifyRes.json();
+            if (verifyData.success) {
+              alert("Payment successful! Database Limits unlocked.");
+              onNavigate('app');
+            } else {
+              alert("Verification failed: " + verifyData.message);
+            }
+          } catch (e) {
+            alert("Payment verification error.");
+          }
+        },
+        theme: {
+          color: "#09090B"
+        }
+      };
+
+      const paymentObject = new (window as any).Razorpay(options);
+      paymentObject.open();
+
+    } catch (error: any) {
+      console.error(error);
+      alert(error.message || "Failed to initiate payment");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
-    <div className="min-h-screen text-[#E8EEF8]" style={{ backgroundColor: COLORS.bg, fontFamily: "'DM Mono', monospace" }}>
+    <div className="min-h-screen" style={{ backgroundColor: COLORS.bg, fontFamily: "'Figtree', sans-serif", color: COLORS.text }}>
       {/* Background Effects */}
       <div 
         style={{
@@ -20,19 +106,19 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' |
       <div 
         style={{
           position: "fixed", borderRadius: "50%", filter: "blur(120px)", pointerEvents: "none", zIndex: 0,
-          width: 600, height: 600, top: -200, left: -100, background: "rgba(0,200,255,0.03)"
+          width: 600, height: 600, top: -200, left: -100, background: "rgba(255, 255, 255, 0.06)"
         }} 
       />
       
       {/* Navigation */}
-      <nav className="flex items-center justify-between px-5 md:px-10 py-4 md:py-5 sticky top-0 z-[100] backdrop-blur-md bg-[#080c18cc] border-b" style={{ borderColor: COLORS.border }}>
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('app')}>
-          <img src={logoIcon} alt="SyncScript Logo" style={{ width: 32, height: 32 }} />
-          <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 700 }}>SyncScript</span>
+      <nav className="flex items-center justify-between px-6 sticky top-0 z-[100] backdrop-blur-md border-b" style={{ borderColor: COLORS.borderSoft, background: "rgba(9, 9, 11, 0.80)", height: 56 }}>
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('landing')}>
+          <img src={logoIcon} alt="SyncScript Logo" style={{ width: 28, height: 28 }} />
+          <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: 17, fontWeight: 700, letterSpacing: "-0.3px" }}>SyncScript</span>
         </div>
-        <div className="flex items-center gap-5 md:gap-8">
-           <a onClick={() => onNavigate('app')} style={{ fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", color: COLORS.textMuted, cursor: "pointer", textDecoration: "none" }}>App</a>
-          <button style={{ background: "none", border: "none", color: COLORS.textMuted, fontSize: 11, letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }} onClick={() => onNavigate('auth')}>Log in</button>
+        <div className="flex items-center gap-5 md:gap-6">
+           <a onClick={() => onNavigate('app')} style={{ fontSize: 14, color: COLORS.textMuted, cursor: "pointer", textDecoration: "none", padding: "6px 12px", borderRadius: 6 }} onMouseEnter={e => { e.currentTarget.style.color = COLORS.text; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }} onMouseLeave={e => { e.currentTarget.style.color = COLORS.textMuted; e.currentTarget.style.background = "transparent"; }}>App</a>
+          <button style={{ background: "none", border: "none", color: COLORS.textMuted, fontSize: 14, cursor: "pointer", padding: "6px 12px", borderRadius: 6 }} onClick={() => onNavigate('auth')} onMouseEnter={e => { e.currentTarget.style.color = COLORS.text; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }} onMouseLeave={e => { e.currentTarget.style.color = COLORS.textMuted; e.currentTarget.style.background = "transparent"; }}>Log in</button>
         </div>
       </nav>
 
@@ -40,7 +126,7 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' |
         
         {/* Header */}
         <div className="text-center mb-16 md:mb-24">
-          <h1 className="text-[32px] md:text-[44px] font-[800] mb-4 tracking-[-0.02em] leading-tight" style={{ fontFamily: "'Syne', sans-serif" }}>Predictable pricing, designed to scale</h1>
+          <h1 className="text-[32px] md:text-[44px] font-[800] mb-4 tracking-[-0.03em] leading-tight" style={{ fontFamily: "'Figtree', sans-serif" }}>Predictable pricing, designed to scale</h1>
           <p className="text-[14px] md:text-[15px]" style={{ color: COLORS.textMuted, letterSpacing: "0.02em" }}>Start converting meetings for free, collaborate with your team, then scale.</p>
         </div>
 
@@ -51,11 +137,11 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' |
           <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 12, padding: "40px 32px", display: "flex", flexDirection: "column", height: "100%" }}>
             <h2 style={{ fontSize: 13, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, marginBottom: 8 }}>Free</h2>
             <p style={{ color: COLORS.textMuted, fontSize: 13, lineHeight: 1.6, marginBottom: 24, minHeight: 42 }}>Perfect for personal projects & occasional usages.</p>
-            <button style={{ width: "100%", background: "#1D2B3F", color: COLORS.text, border: "none", padding: "12px", borderRadius: 6, fontSize: 13, fontWeight: 500, letterSpacing: "0.05em", cursor: "pointer", marginBottom: 32, transition: "background 0.2s" }} onClick={() => onNavigate('auth')} onMouseEnter={e => e.currentTarget.style.background = "#243552"} onMouseLeave={e => e.currentTarget.style.background = "#1D2B3F"}>
-              Start for Free
+            <button style={{ width: "100%", background: COLORS.surface2, color: COLORS.text, border: `1px solid ${COLORS.border}`, padding: "12px", borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: "pointer", marginBottom: 32, transition: "background 0.2s, border-color 0.2s" }} onClick={() => onNavigate('app')} onMouseEnter={e => { e.currentTarget.style.background = COLORS.border; e.currentTarget.style.borderColor = COLORS.textDim; }} onMouseLeave={e => { e.currentTarget.style.background = COLORS.surface2; e.currentTarget.style.borderColor = COLORS.border; }}>
+              Continue with Free
             </button>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 16 }}>
-              <span style={{ fontSize: 42, fontWeight: 700, fontFamily: "'Syne', sans-serif" }}>₹0</span>
+              <span style={{ fontSize: 42, fontWeight: 800, fontFamily: "'Figtree', sans-serif", letterSpacing: "-1px" }}>₹0</span>
               <span style={{ color: COLORS.textMuted, fontSize: 13 }}>/ month</span>
             </div>
             <div style={{ borderTop: `1px solid ${COLORS.border}`, margin: "32px 0 24px" }} />
@@ -68,15 +154,15 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' |
           </div>
 
           {/* PRO PLAN */}
-          <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.accentDark}`, borderRadius: 12, padding: "40px 32px", display: "flex", flexDirection: "column", height: "100%", position: "relative", transform: "translateY(-12px)", boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)" }}>
-            <div style={{ position: "absolute", top: -14, left: "20px", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.indigo})`, color: "#fff", padding: "4px 12px", borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>Most Popular</div>
+          <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.borderLight}`, borderRadius: 12, padding: "40px 32px", display: "flex", flexDirection: "column", height: "100%", position: "relative", transform: "translateY(-12px)", boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)" }}>
+            <div style={{ position: "absolute", top: -14, left: "20px", background: COLORS.accent, color: COLORS.onAccent, padding: "4px 12px", borderRadius: 20, fontSize: 10, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>Most Popular</div>
             <h2 style={{ fontSize: 13, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, marginBottom: 8, color: COLORS.text }}>Pro</h2>
             <p style={{ color: COLORS.textMuted, fontSize: 13, lineHeight: 1.6, marginBottom: 24, minHeight: 42 }}>For professionals seeking unlimited sync features.</p>
-            <button style={{ width: "100%", background: `linear-gradient(135deg, ${COLORS.accent}, ${COLORS.indigo})`, color: "#fff", border: "none", padding: "12px", borderRadius: 6, fontSize: 13, fontWeight: 500, letterSpacing: "0.05em", cursor: "pointer", marginBottom: 32, transition: "opacity 0.2s" }} onClick={() => onNavigate('auth')} onMouseEnter={e => e.currentTarget.style.opacity = "0.9"} onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
-              Upgrade now
+            <button disabled={loadingPlan === 'pro'} style={{ width: "100%", background: COLORS.accent, color: COLORS.onAccent, border: "none", padding: "12px", borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: loadingPlan === 'pro' ? 'wait' : 'pointer', marginBottom: 32, transition: "opacity 0.2s" }} onClick={() => handleUpgrade('pro')} onMouseEnter={e => { if(loadingPlan !== 'pro') e.currentTarget.style.opacity = "0.88"; }} onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
+              {loadingPlan === 'pro' ? 'Processing...' : 'Upgrade now'}
             </button>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 16 }}>
-              <span style={{ fontSize: 42, fontWeight: 700, fontFamily: "'Syne', sans-serif" }}>₹399</span>
+              <span style={{ fontSize: 42, fontWeight: 800, fontFamily: "'Figtree', sans-serif", letterSpacing: "-1px" }}>₹399</span>
               <span style={{ color: COLORS.textMuted, fontSize: 13 }}>/ month</span>
             </div>
             <div style={{ borderTop: `1px solid ${COLORS.border}`, margin: "32px 0 24px" }} />
@@ -93,11 +179,11 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: 'app' |
           <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.border}`, borderRadius: 12, padding: "40px 32px", display: "flex", flexDirection: "column", height: "100%" }}>
             <h2 style={{ fontSize: 13, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700, marginBottom: 8 }}>Team</h2>
             <p style={{ color: COLORS.textMuted, fontSize: 13, lineHeight: 1.6, marginBottom: 24, minHeight: 42 }}>Add seats and features for your org.</p>
-            <button style={{ width: "100%", background: "#1D2B3F", color: COLORS.text, border: "none", padding: "12px", borderRadius: 6, fontSize: 13, fontWeight: 500, letterSpacing: "0.05em", cursor: "pointer", marginBottom: 32, transition: "background 0.2s" }} onClick={() => onNavigate('auth')} onMouseEnter={e => e.currentTarget.style.background = "#243552"} onMouseLeave={e => e.currentTarget.style.background = "#1D2B3F"}>
-              Upgrade now
+            <button disabled={loadingPlan === 'team'} style={{ width: "100%", background: COLORS.surface2, color: COLORS.text, border: `1px solid ${COLORS.border}`, padding: "12px", borderRadius: 8, fontSize: 14, fontWeight: 500, cursor: loadingPlan === 'team' ? 'wait' : 'pointer', marginBottom: 32, transition: "background 0.2s, border-color 0.2s" }} onClick={() => handleUpgrade('team')} onMouseEnter={e => { if(loadingPlan !== 'team') { e.currentTarget.style.background = COLORS.border; e.currentTarget.style.borderColor = COLORS.textDim; } }} onMouseLeave={e => { e.currentTarget.style.background = COLORS.surface2; e.currentTarget.style.borderColor = COLORS.border; }}>
+              {loadingPlan === 'team' ? 'Processing...' : 'Upgrade now'}
             </button>
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 16 }}>
-              <span style={{ fontSize: 42, fontWeight: 700, fontFamily: "'Syne', sans-serif" }}>₹1499</span>
+              <span style={{ fontSize: 42, fontWeight: 800, fontFamily: "'Figtree', sans-serif", letterSpacing: "-1px" }}>₹1499</span>
               <span style={{ color: COLORS.textMuted, fontSize: 13 }}>/ month</span>
             </div>
             <div style={{ borderTop: `1px solid ${COLORS.border}`, margin: "32px 0 24px" }} />
