@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({
         >
           <img src={logoIcon} alt="SyncScript Logo" />
           <span>SyncScript</span>
-          {isApp && <span className="nav-beta-badge">Beta</span>}
+          <span className="nav-beta-badge">Beta</span>
         </div>
 
         {/* Navigation Links */}

@@ -117,14 +117,14 @@
 
 .nav-beta-badge {
   font-size: 10px;
-  font-weight: 600;
-  padding: 4px 8px;
+  font-weight: 700;
+  padding: 3px 8px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(234, 179, 8, 0.1); 
+  color: #EAB308; /* Mustard Yellow */
+  border: 1px solid rgba(234, 179, 8, 0.2);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
 }
 
 .nav-back {
