@@ -34,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({
           role="button"
           tabIndex={0}
         >
-          <img src={logoIcon} alt="SyncScript Logo" />
-          <span>SyncScript</span>
+          <img src={logoIcon} alt="SyncScripts Logo" />
+          <span>SyncScripts</span>
           <span className="nav-beta-badge">Beta</span>
         </div>
 

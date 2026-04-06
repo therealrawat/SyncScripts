@@ -651,9 +651,9 @@ export default function ComingSoonPricing({ user, onNavigate, onSignIn, onSignOu
 
       <footer>
         <p>
-          <a onClick={() => onNavigate('landing')} style={{ cursor: 'pointer' }}>← Back to SyncScript</a>
+          <a onClick={() => onNavigate('landing')} style={{ cursor: 'pointer' }}>← Back to SyncScripts</a>
           &nbsp;·&nbsp;
-          © 2026 SyncScript. . Priyanshu Rawat. All rights reserved.
+          © 2026 SyncScripts. . Priyanshu Rawat. All rights reserved.
         </p>
       </footer>
     </div>

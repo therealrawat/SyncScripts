@@ -63,14 +63,14 @@ export default function AuthPage({ }: { onNavigate?: (view: AppView) => void }) 
         <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 md:p-16 lg:px-24 border-r relative z-10" style={{ borderColor: COLORS.borderSoft, background: COLORS.surface }}>
           <div className="w-full max-w-[340px] flex flex-col items-center">
             
-            {/* SyncScript Logo */}
+            {/* SyncScripts Logo */}
             <div className="mb-10 flex items-center justify-center gap-2">
-              <img src={logoIcon} alt="SyncScript Logo" style={{ width: 32, height: 32 }} />
-              <span className="syne-font text-[20px] font-bold">SyncScript</span>
+              <img src={logoIcon} alt="SyncScripts Logo" style={{ width: 32, height: 32 }} />
+              <span className="syne-font text-[20px] font-bold">SyncScripts</span>
             </div>
 
-            <h1 className="syne-font text-[28px] font-bold mb-4 tracking-tight">Sign in to SyncScript</h1>
-            <p className="text-[11px] mb-8 font-medium tracking-widest uppercase" style={{ color: COLORS.textDim }}>Join SyncScript today</p>
+            <h1 className="syne-font text-[28px] font-bold mb-4 tracking-tight">Sign in to SyncScripts</h1>
+            <p className="text-[11px] mb-8 font-medium tracking-widest uppercase" style={{ color: COLORS.textDim }}>Join SyncScripts today</p>
 
             <div className="w-full space-y-3 mb-8">
               <SocialButton icon={<GoogleIcon />} label="Continue with Google" onClick={handleGoogleSignIn} />

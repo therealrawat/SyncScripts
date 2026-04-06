@@ -674,7 +674,7 @@ export default function App() {
           </div>
 
           <footer className="footer-container" style={{ borderTop: `1px solid ${COLORS.borderSoft}`, padding: "32px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1100, margin: "0 auto" }}>
-            <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: 14, fontWeight: 700, color: COLORS.textMuted }}>SyncScript</span>
+            <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: 14, fontWeight: 700, color: COLORS.textMuted }}>SyncScripts</span>
             <span style={{ fontSize: 12, color: COLORS.textDim }}>© 2026 Priyanshu Rawat</span>
             <div className="nav-desktop-links" style={{ display: "flex", gap: 24 }}>
               <a className="nav-link">Privacy</a>

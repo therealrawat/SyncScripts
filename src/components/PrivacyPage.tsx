@@ -490,8 +490,8 @@ export default function PrivacyPage({ user, onNavigate, onSignIn, onSignOut }: P
               <div className="section-num">01</div>
               <h2>Who we are</h2>
             </div>
-            <p>SyncScript (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is an AI-powered meeting summarization tool available at <strong style={{ color: 'var(--text)' }}>syncscripts.netlify.app</strong>. We help teams - especially scrum masters and managers - turn raw meeting transcripts into structured summaries, action items, and decisions.</p>
-            <p>This Privacy Policy explains what personal data we collect, why we collect it, and how we handle it when you use SyncScript.</p>
+            <p>SyncScripts (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is an AI-powered meeting summarization tool available at <strong style={{ color: 'var(--text)' }}>syncscripts.netlify.app</strong>. We help teams - especially scrum masters and managers - turn raw meeting transcripts into structured summaries, action items, and decisions.</p>
+            <p>This Privacy Policy explains what personal data we collect, why we collect it, and how we handle it when you use SyncScripts.</p>
           </div>
 
           <div className="section-divider"></div>

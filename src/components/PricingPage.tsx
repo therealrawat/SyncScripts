@@ -56,7 +56,7 @@ export default function PricingPage({ user, onNavigate, onSignIn, onSignOut }: {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || "test_key",
         amount: orderData.amount,
         currency: "INR",
-        name: "SyncScript",
+        name: "SyncScripts",
         description: `Upgrade to ${plan.toUpperCase()} Plan`,
         order_id: orderData.orderId,
         handler: async function (response: any) {

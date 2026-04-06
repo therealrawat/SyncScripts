@@ -178,7 +178,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
           </h1>
 
           <p className="hero-sub">
-            SyncScript uses AI to summarize your meeting transcripts, extract action items, and surface what actually matters - in seconds.
+            SyncScripts uses AI to summarize your meeting transcripts, extract action items, and surface what actually matters - in seconds.
           </p>
 
           <div className="hero-ctas">
@@ -199,7 +199,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
         <div className="section-inner">
           <div className="section-tag">Features</div>
           <h2 className="section-title">Everything your scrum team needs</h2>
-          <p className="section-sub">Stop sifting through hour-long meeting recordings. SyncScript turns raw transcripts into structured intelligence.</p>
+          <p className="section-sub">Stop sifting through hour-long meeting recordings. SyncScripts turns raw transcripts into structured intelligence.</p>
 
           <div className="features-grid">
             <div className="feature-card">
@@ -263,7 +263,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
             <div className="step">
               <div className="step-num">02 <div className="step-line" /></div>
               <div className="step-title">AI does the work</div>
-              <div className="step-desc">SyncScript creates high-level summaries, assignee-linked action items, and estimated engineering tasks - in seconds.</div>
+              <div className="step-desc">SyncScripts creates high-level summaries, assignee-linked action items, and estimated engineering tasks - in seconds.</div>
             </div>
             <div className="step">
               <div className="step-num">03 <div className="step-line" /></div>
@@ -332,7 +332,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
         <div className="cta-glow" />
         <div className="cta-inner">
           <h2 className="cta-title">Your meetings deserve better notes.</h2>
-          <p className="cta-sub">Join teams already using SyncScript.</p>
+          <p className="cta-sub">Join teams already using SyncScripts.</p>
           <div className="input-row">
             <input type="email" className="email-input" placeholder="you@company.com" aria-label="Work email" />
             <button type="button" className="btn-primary btn-lg" onClick={() => onNavigate('app')}>
@@ -350,7 +350,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
             <div className="footer-brand">
               <a href="/" className="nav-logo" style={{ textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
                 <img src={logoIcon} alt="" width={28} height={28} />
-                SyncScript
+                SyncScripts
               </a>
               <p>AI-powered meeting intelligence for teams that value their time.</p>
             </div>
@@ -361,7 +361,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© 2026 SyncScript. Priyanshu Rawat. All rights reserved.</p>
+            <p>© 2026 SyncScripts. Priyanshu Rawat. All rights reserved.</p>
             <p style={{ color: 'var(--text-3)' }}>syncscripts.netlify.app</p>
           </div>
         </div>
