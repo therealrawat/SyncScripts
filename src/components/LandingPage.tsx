@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import logoIcon from '../assets/logo.svg';
 import type { AppView } from '../navigation';
 import Header from './Header';
@@ -9,6 +10,145 @@ const ArrowIcon = () => (
     <path d="M12 5l7 7-7 7" />
   </svg>
 );
+
+const HeroSlideshow = () => {
+  const [activeSlide, setActiveSlide] = useState(0); // 0: Input, 1: Summary, 2: Actions, 3: Tasks
+  const transcript = "so we've got the sprint capacity at 42 points. Rohan, can you pick up the auth refactor ticket? That's estimated at 8 points. Also, the API gateway work needs a review by Thursday - Priya, that's on you. Let's also move the billing fix up in priority, we've had three client complaints this week.";
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % 4);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  const renderInput = () => (
+    <div className="slide-content animate-slide">
+      <div className="mock-input-area">
+        {transcript}
+      </div>
+      <div className="mock-bottom">
+        <div className="mock-indicators">
+          <div className="mock-indicator">EXECUTIVE SUMMARY</div>
+          <div className="mock-indicator">ACTION ITEMS</div>
+          <div className="mock-indicator">TECH TASKS</div>
+        </div>
+        <div className="mock-generate">
+          Generate
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderSummary = () => (
+    <div className="slide-content animate-slide">
+      <div className="mock-sub-tabs">
+        <div className="mock-sub-tab active">Summary</div>
+        <div className="mock-sub-tab">Actions (2)</div>
+        <div className="mock-sub-tab">Tasks (1)</div>
+        <div className="mock-export">EXPORT JSON</div>
+      </div>
+      <div className="mock-output-box">
+        <p style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--text)', marginBottom: 20 }}>
+          The team discussed sprint capacity (42 points) and assigned the auth refactor to Rohan. Priya will review the API gateway by Thursday. The billing fix was prioritized due to increasing client complaints.
+        </p>
+        <div className="mock-meta" style={{ marginTop: 'auto' }}>
+          <span className="mock-output-tag">Sprint Planning</span>
+          <span className="mock-output-tag">Prioritization</span>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderActions = () => (
+    <div className="slide-content animate-slide">
+      <div className="mock-sub-tabs">
+        <div className="mock-sub-tab">Summary</div>
+        <div className="mock-sub-tab active">Actions (2)</div>
+        <div className="mock-sub-tab">Tasks (1)</div>
+        <div className="mock-export">EXPORT JSON</div>
+      </div>
+      <div className="mock-output-box" style={{ padding: 20 }}>
+        <div className="mock-output-header">
+          <span className="mock-output-tag">ACTION ITEMS</span>
+          <span className="mock-progress">0/2 Completed</span>
+        </div>
+        <div className="mock-checklist">
+          <div className="mock-check-item">
+            <div className="mock-checkbox" />
+            <div className="mock-check-content">
+              <div className="mock-check-text">Elevate priority of billing fix due to recent client complaints.</div>
+              <div className="mock-meta">
+                <span className="mock-owner">@N/A</span>
+                <span className="mock-prio prio-critical">CRITICAL</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ height: 1, background: 'var(--border)', margin: '4px 0' }} />
+          <div className="mock-check-item">
+            <div className="mock-checkbox" />
+            <div className="mock-check-content">
+              <div className="mock-check-text">Review API gateway work by Thursday.</div>
+              <div className="mock-meta">
+                <span className="mock-owner">@Priya</span>
+                <span className="mock-prio prio-high">HIGH</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderTasks = () => (
+    <div className="slide-content animate-slide">
+      <div className="mock-sub-tabs">
+        <div className="mock-sub-tab">Summary</div>
+        <div className="mock-sub-tab">Actions (2)</div>
+        <div className="mock-sub-tab active">Tasks (1)</div>
+        <div className="mock-export">EXPORT JSON</div>
+      </div>
+      <div className="mock-output-box" style={{ padding: 20, display: 'flex', alignItems: 'center' }}>
+        <div style={{ width: '100%', padding: '16px 20px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 10 }} className="mock-task-card">
+           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span className="mock-output-tag" style={{ background: 'rgba(255,255,255,0.08)' }}>FEATURE</span>
+              <span className="mock-task-title">Auth Refactor</span>
+           </div>
+           <div className="mock-task-meta">
+              <span className="mock-owner" style={{ color: 'var(--text-2)' }}>@Rohan</span>
+              <span className="mock-estimate">4d</span>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="hero-preview">
+      <div className="preview-bar">
+        <div className="mock-tabs">
+          <div className={`mock-tab ${activeSlide === 0 ? 'active' : ''}`}>Input</div>
+          <div className={`mock-tab ${activeSlide !== 0 ? 'active output-active' : ''}`}>Output</div>
+        </div>
+        <div className="mock-indicators">
+           {activeSlide === 0 && <span style={{ fontSize: 11, color: 'var(--text-3)' }}>296 chars</span>}
+           <div style={{ display: 'flex', gap: 6, marginLeft: 12 }}>
+              <div className="dot dot-r" />
+              <div className="dot dot-y" />
+              <div className="dot dot-g" />
+           </div>
+        </div>
+      </div>
+      <div className="preview-body">
+        {activeSlide === 0 && renderInput()}
+        {activeSlide === 1 && renderSummary()}
+        {activeSlide === 2 && renderActions()}
+        {activeSlide === 3 && renderTasks()}
+      </div>
+    </div>
+  );
+};
 
 type Props = {
   user: any;
@@ -49,48 +189,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
             <a href="#how" className="btn-outline btn-lg">See how it works</a>
           </div>
 
-          <div className="hero-preview">
-            <div className="preview-bar">
-              <div className="dot dot-r" />
-              <div className="dot dot-y" />
-              <div className="dot dot-g" />
-              <span style={{ fontSize: 12, color: 'var(--text-3)', marginLeft: 10 }}>Sprint Planning - April 5, 2026</span>
-            </div>
-            <div className="preview-body">
-              <div>
-                <div className="preview-label">Transcript</div>
-                <div className="preview-text">
-                  ...so we&apos;ve got the sprint capacity at 42 points. Rohan, can you pick up the auth refactor ticket? That&apos;s estimated at 8 points. Also, the API gateway work needs a review by Thursday - Priya, that&apos;s on you. Let&apos;s also move the billing fix up in priority, we&apos;ve had three client complaints this week...
-                </div>
-              </div>
-              <div className="divider-v" />
-              <div>
-                <div className="preview-label">AI Summary</div>
-                <div className="summary-item">
-                  <div className="summary-bullet" />
-                  <span>Sprint capacity set at 42 story points</span>
-                </div>
-                <div className="summary-item">
-                  <div className="summary-bullet" />
-                  <span>Rohan assigned auth refactor (8 pts)</span>
-                </div>
-                <div className="summary-item">
-                  <div className="summary-bullet" />
-                  <span>Priya to review API gateway by Thursday</span>
-                </div>
-                <div className="summary-item">
-                  <div className="summary-bullet" />
-                  <span>Billing fix escalated - 3 client complaints</span>
-                </div>
-                <div style={{ marginTop: 14 }}>
-                  <div className="preview-label">Tags</div>
-                  <span className="chip">Sprint Planning</span>
-                  <span className="chip">Action Items</span>
-                  <span className="chip">Escalation</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <HeroSlideshow />
         </div>
       </section>
 
