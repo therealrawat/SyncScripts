@@ -479,7 +479,7 @@ export default function App() {
   }
 
   if (currentView === 'landing') {
-    return <LandingPage onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} />;
+    return <LandingPage user={user} onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} onSignOut={() => supabase.auth.signOut()} />;
   }
 
   if (currentView === 'coming-soon-pricing') {

@@ -10,11 +10,13 @@ const ArrowIcon = () => (
 );
 
 type Props = {
+  user: any;
   onNavigate: (view: AppView) => void;
   onSignIn: () => void;
+  onSignOut: () => void;
 };
 
-export default function LandingPage({ onNavigate, onSignIn }: Props) {
+export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: Props) {
   return (
     <div className="landing-page">
       <nav>
@@ -30,11 +32,23 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
             <li><a onClick={() => onNavigate('privacy')} style={{ cursor: 'pointer' }}>Privacy</a></li>
           </ul>
           <div className="nav-actions">
-            <button type="button" className="btn-ghost" onClick={onSignIn}>Sign in</button>
-            <button type="button" className="btn-primary hide-on-mobile" onClick={() => onNavigate('app')}>
-              Get started free
-              <ArrowIcon />
-            </button>
+            {user ? (
+              <>
+                <button type="button" className="btn-ghost" onClick={onSignOut}>Sign out</button>
+                <button type="button" className="btn-primary hide-on-mobile" onClick={() => onNavigate('app')}>
+                  Go to App
+                  <ArrowIcon />
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="button" className="btn-ghost" onClick={onSignIn}>Sign in</button>
+                <button type="button" className="btn-primary hide-on-mobile" onClick={() => onNavigate('app')}>
+                  Get started free
+                  <ArrowIcon />
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
@@ -54,7 +68,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
 
           <div className="hero-ctas">
             <button type="button" className="btn-primary btn-lg" onClick={() => onNavigate('app')}>
-              Start for free
+              {user ? 'Go to App' : 'Start for free'}
               <ArrowIcon />
             </button>
             <a href="#how" className="btn-outline btn-lg">See how it works</a>
