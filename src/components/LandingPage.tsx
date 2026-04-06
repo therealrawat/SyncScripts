@@ -121,15 +121,15 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
               <div className="feature-icon" aria-hidden>
                 <svg viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.292-6.292a2.426 2.426 0 0 0 0-3.42z" /><path d="M7.5 7.5h.01" /></svg>
               </div>
-              <div className="feature-title">Smart Tagging</div>
-              <div className="feature-desc">Topics, decisions, and blockers are auto-labeled so you can filter and search across all your meetings instantly.</div>
+              <div className="feature-title">Engineering task detection</div>
+              <div className="feature-desc">AI identifies technical tasks, assigns them to contributors, and provides standard story-point estimations automatically.</div>
             </div>
             <div className="feature-card">
               <div className="feature-icon" aria-hidden>
                 <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
               </div>
-              <div className="feature-title">One-click Export</div>
-              <div className="feature-desc">Export summaries to Notion, Confluence, Jira, or plain markdown. Your workflow, not ours.</div>
+              <div className="feature-title">Zero-config Export</div>
+              <div className="feature-desc">Instantly copy formatted JSON or plain text for Notion, Confluence, and Jira. No integration wait-times or OAuth setups.</div>
             </div>
             <div className="feature-card">
               <div className="feature-icon" aria-hidden>
@@ -164,12 +164,12 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
             <div className="step">
               <div className="step-num">02 <div className="step-line" /></div>
               <div className="step-title">AI does the work</div>
-              <div className="step-desc">SyncScript extracts summaries, action items, decisions, and blockers - structured and ready to share.</div>
+              <div className="step-desc">SyncScript creates high-level summaries, assignee-linked action items, and estimated engineering tasks - in seconds.</div>
             </div>
             <div className="step">
               <div className="step-num">03 <div className="step-line" /></div>
-              <div className="step-title">Share with your team</div>
-              <div className="step-desc">Export directly to your project management tool or share a clean link with stakeholders in one click.</div>
+              <div className="step-title">Paste to your workflow</div>
+              <div className="step-desc">Quick-copy formatted output for JIRA, Notion, or Confluence. Zero manual data entry or integration required.</div>
             </div>
           </div>
         </div>
@@ -188,10 +188,10 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
               <div className="plan-period">forever</div>
               <div className="plan-divider" />
               <ul className="plan-features">
-                <li>5 summaries / month</li>
+                <li>3 summaries / month</li>
                 <li>Action item detection</li>
-                <li>Copy &amp; paste export</li>
-                <li>7-day history</li>
+                <li>Engineering task estimation</li>
+                <li>Quick copy exports</li>
               </ul>
               <button type="button" className="plan-cta plan-cta-ghost" onClick={() => onNavigate('app')}>Get started free</button>
             </div>
