@@ -574,7 +574,7 @@ export default function PrivacyPage({ user, onNavigate, onSignIn, onSignOut }: P
             <p>Your meeting transcripts are the most sensitive data you share with us. Here is exactly how they are handled:</p>
 
             <h3>Processing</h3>
-            <p>When you paste a transcript, it is sent to our AI provider (Google Gemini, Anthropic Claude) to generate a summary. This transmission is encrypted in transit. The transcript is processed in memory and is not stored on our servers after the response is returned.</p>
+            <p>When you paste a transcript, it is sent to our trusted AI processing providers to generate a summary. This transmission is encrypted in transit. The transcript is processed in memory and is not stored on our servers after the response is returned.</p>
 
             <h3>Saved summaries</h3>
             <p>If you choose to save a summary to your history, only the AI-generated output is stored - not your original transcript - unless you explicitly save both.</p>
@@ -585,7 +585,7 @@ export default function PrivacyPage({ user, onNavigate, onSignIn, onSignOut }: P
             </div>
 
             <h3>Third-party AI processing</h3>
-            <p>Transcript data is processed by Google Gemini and Anthropic Claude API. Google&apos;s data processing terms apply to this step. We recommend reviewing <a href="https://ai.google.dev/terms" style={{ color: 'var(--text)' }}>Google&apos;s AI terms</a> if your organisation has specific compliance requirements.</p>
+            <p>Transcript data is processed by industry-leading AI models. Standard data processing terms apply to this step. We recommend reviewing our AI processing provider&apos;s data policies if your organisation has specific compliance requirements.</p>
           </div>
 
           <div className="section-divider"></div>
@@ -627,7 +627,7 @@ export default function PrivacyPage({ user, onNavigate, onSignIn, onSignOut }: P
                   <td>Email, profile info, subscription status</td>
                 </tr>
                 <tr>
-                  <td><strong>Google Gemini, Anthropic Claude</strong></td>
+                  <td><strong>AI Partners</strong></td>
                   <td>AI transcript processing</td>
                   <td>Meeting transcript text (not linked to your identity)</td>
                 </tr>

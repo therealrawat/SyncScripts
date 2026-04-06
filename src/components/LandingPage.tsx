@@ -35,7 +35,7 @@ const HeroSlideshow = () => {
         </div>
         <div className="mock-generate">
           Generate
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-7-7 7 7-7 7" /></svg>
         </div>
       </div>
     </div>
@@ -111,14 +111,14 @@ const HeroSlideshow = () => {
       </div>
       <div className="mock-output-box" style={{ padding: 20, display: 'flex', alignItems: 'center' }}>
         <div style={{ width: '100%', padding: '16px 20px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: 10 }} className="mock-task-card">
-           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <span className="mock-output-tag" style={{ background: 'rgba(255,255,255,0.08)' }}>FEATURE</span>
-              <span className="mock-task-title">Auth Refactor</span>
-           </div>
-           <div className="mock-task-meta">
-              <span className="mock-owner" style={{ color: 'var(--text-2)' }}>@Rohan</span>
-              <span className="mock-estimate">4d</span>
-           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <span className="mock-output-tag" style={{ background: 'rgba(255,255,255,0.08)' }}>FEATURE</span>
+            <span className="mock-task-title">Auth Refactor</span>
+          </div>
+          <div className="mock-task-meta">
+            <span className="mock-owner" style={{ color: 'var(--text-2)' }}>@Rohan</span>
+            <span className="mock-estimate">4d</span>
+          </div>
         </div>
       </div>
     </div>
@@ -132,12 +132,12 @@ const HeroSlideshow = () => {
           <div className={`mock-tab ${activeSlide !== 0 ? 'active output-active' : ''}`}>Output</div>
         </div>
         <div className="mock-indicators">
-           {activeSlide === 0 && <span style={{ fontSize: 11, color: 'var(--text-3)' }}>296 chars</span>}
-           <div style={{ display: 'flex', gap: 6, marginLeft: 12 }}>
-              <div className="dot dot-r" />
-              <div className="dot dot-y" />
-              <div className="dot dot-g" />
-           </div>
+          {activeSlide === 0 && <span style={{ fontSize: 11, color: 'var(--text-3)' }}>296 chars</span>}
+          <div style={{ display: 'flex', gap: 6, marginLeft: 12 }}>
+            <div className="dot dot-r" />
+            <div className="dot dot-y" />
+            <div className="dot dot-g" />
+          </div>
         </div>
       </div>
       <div className="preview-body">
@@ -160,12 +160,12 @@ type Props = {
 export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: Props) {
   return (
     <div className="landing-page">
-      <Header 
-        user={user} 
-        currentView="landing" 
-        onNavigate={onNavigate} 
-        onSignIn={onSignIn} 
-        onSignOut={onSignOut} 
+      <Header
+        user={user}
+        currentView="landing"
+        onNavigate={onNavigate}
+        onSignIn={onSignIn}
+        onSignOut={onSignOut}
       />
 
       <section style={{ position: 'relative', overflow: 'hidden' }}>
@@ -206,8 +206,8 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
               <div className="feature-icon" aria-hidden>
                 <svg viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>
               </div>
-              <div className="feature-title">AI Summarization</div>
-              <div className="feature-desc">Paste any transcript and get a crisp, structured summary with context preserved. Powered by Gemini Pro.</div>
+              <div className="feature-title">Smart Summarization</div>
+              <div className="feature-desc">Paste any transcript and get a crisp, structured summary with context preserved. Powered by advanced AI.</div>
             </div>
             <div className="feature-card">
               <div className="feature-icon" aria-hidden>
