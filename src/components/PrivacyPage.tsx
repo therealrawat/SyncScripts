@@ -1,11 +1,5 @@
 import type { AppView } from '../navigation';
-import logoIcon from '../assets/logo.svg';
-
-const BackIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-  </svg>
-);
+import Header from './Header';
 
 const ShieldIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -37,9 +31,14 @@ const WarningIcon = () => (
   </svg>
 );
 
-type Props = { onNavigate: (view: AppView) => void };
+type Props = { 
+  user: any;
+  onNavigate: (view: AppView) => void;
+  onSignIn: () => void;
+  onSignOut: () => void;
+};
 
-export default function PrivacyPage({ onNavigate }: Props) {
+export default function PrivacyPage({ user, onNavigate, onSignIn, onSignOut }: Props) {
   return (
     <div className="privacy-page">
       <style>{`
@@ -413,18 +412,13 @@ export default function PrivacyPage({ onNavigate }: Props) {
         }
       `}</style>
 
-      <nav>
-        <div className="nav-inner">
-          <div className="nav-logo" onClick={() => onNavigate('landing')}>
-            <img src={logoIcon} alt="SyncScript Logo" style={{ width: 28, height: 28, filter: 'grayscale(1) brightness(2)' }} />
-            SyncScript
-          </div>
-          <div className="nav-back" onClick={() => onNavigate('landing')}>
-            <BackIcon />
-            Back to home
-          </div>
-        </div>
-      </nav>
+      <Header 
+        user={user} 
+        currentView="privacy" 
+        onNavigate={onNavigate} 
+        onSignIn={onSignIn} 
+        onSignOut={onSignOut} 
+      />
 
       <div className="page">
         <div className="page-header">

@@ -1,5 +1,6 @@
 import logoIcon from '../assets/logo.svg';
 import type { AppView } from '../navigation';
+import Header from './Header';
 import '../landing.css';
 
 const ArrowIcon = () => (
@@ -19,39 +20,13 @@ type Props = {
 export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: Props) {
   return (
     <div className="landing-page">
-      <nav>
-        <div className="nav-inner">
-          <a href="/" className="nav-logo" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-            <img src={logoIcon} alt="" width={28} height={28} />
-            SyncScript
-          </a>
-          <ul className="nav-links">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#how">How it works</a></li>
-            <li><a onClick={() => onNavigate('coming-soon-pricing')} style={{ cursor: 'pointer' }}>Pricing</a></li>
-            <li><a onClick={() => onNavigate('privacy')} style={{ cursor: 'pointer' }}>Privacy</a></li>
-          </ul>
-          <div className="nav-actions">
-            {user ? (
-              <>
-                <button type="button" className="btn-ghost" onClick={onSignOut}>Sign out</button>
-                <button type="button" className="btn-primary hide-on-mobile" onClick={() => onNavigate('app')}>
-                  Go to App
-                  <ArrowIcon />
-                </button>
-              </>
-            ) : (
-              <>
-                <button type="button" className="btn-ghost" onClick={onSignIn}>Sign in</button>
-                <button type="button" className="btn-primary hide-on-mobile" onClick={() => onNavigate('app')}>
-                  Get started free
-                  <ArrowIcon />
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Header 
+        user={user} 
+        currentView="landing" 
+        onNavigate={onNavigate} 
+        onSignIn={onSignIn} 
+        onSignOut={onSignOut} 
+      />
 
       <section style={{ position: 'relative', overflow: 'hidden' }}>
         <div className="hero">

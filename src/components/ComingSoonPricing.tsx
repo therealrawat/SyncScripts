@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { AppView } from '../navigation';
 import logoIcon from '../assets/logo.svg';
+import Header from './Header';
 
 const ArrowIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.15s' }}>
@@ -22,11 +23,13 @@ const LockIcon = () => (
 );
 
 type Props = { 
+  user: any;
   onNavigate: (view: AppView) => void;
   onSignIn: () => void;
+  onSignOut: () => void;
 };
 
-export default function ComingSoonPricing({ onNavigate, onSignIn }: Props) {
+export default function ComingSoonPricing({ user, onNavigate, onSignIn, onSignOut }: Props) {
   const [email, setEmail] = useState('');
   const [notified, setNotified] = useState(false);
   const [error, setError] = useState(false);
@@ -541,23 +544,13 @@ export default function ComingSoonPricing({ onNavigate, onSignIn }: Props) {
         }
       `}</style>
 
-      <nav>
-        <div className="nav-inner">
-          <div className="nav-logo" onClick={() => onNavigate('landing')} role="presentation">
-            <img src={logoIcon} alt="SyncScript Logo" style={{ width: 28, height: 28, filter: 'grayscale(1) brightness(2)' }} />
-            SyncScript
-          </div>
-          <ul className="nav-links">
-            <li><a onClick={() => onNavigate('landing')}>Features</a></li>
-            <li><a onClick={() => onNavigate('landing')}>How it works</a></li>
-            <li><a className="active">Pricing</a></li>
-          </ul>
-          <div className="nav-actions">
-            <button className="btn-ghost" onClick={onSignIn}>Sign in</button>
-            <button className="btn-primary" onClick={() => onNavigate('app')}>Get started free</button>
-          </div>
-        </div>
-      </nav>
+      <Header 
+        user={user} 
+        currentView="coming-soon-pricing" 
+        onNavigate={onNavigate} 
+        onSignIn={onSignIn} 
+        onSignOut={onSignOut} 
+      />
 
       <main>
         <div className="glow glow-1" />

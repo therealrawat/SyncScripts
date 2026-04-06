@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { AppView } from '../navigation';
 import { supabase } from '../supabase';
 import { COLORS } from '../theme';
-import logoIcon from '../assets/logo.svg';
+import Header from './Header';
 
 const CheckIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 mt-1">
@@ -10,7 +10,12 @@ const CheckIcon = () => (
   </svg>
 );
 
-export default function PricingPage({ onNavigate }: { onNavigate: (view: AppView) => void }) {
+export default function PricingPage({ user, onNavigate, onSignIn, onSignOut }: { 
+  user: any, 
+  onNavigate: (view: AppView) => void,
+  onSignIn: () => void,
+  onSignOut: () => void
+}) {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const loadRazorpayScript = () => {
@@ -111,16 +116,13 @@ export default function PricingPage({ onNavigate }: { onNavigate: (view: AppView
       />
       
       {/* Navigation */}
-      <nav className="flex items-center justify-between px-6 sticky top-0 z-[100] backdrop-blur-md border-b" style={{ borderColor: COLORS.borderSoft, background: "rgba(9, 9, 11, 0.80)", height: 56 }}>
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('landing')}>
-          <img src={logoIcon} alt="SyncScript Logo" style={{ width: 28, height: 28 }} />
-          <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: 17, fontWeight: 700, letterSpacing: "-0.3px" }}>SyncScript</span>
-        </div>
-        <div className="flex items-center gap-5 md:gap-6">
-           <a onClick={() => onNavigate('app')} style={{ fontSize: 14, color: COLORS.textMuted, cursor: "pointer", textDecoration: "none", padding: "6px 12px", borderRadius: 6 }} onMouseEnter={e => { e.currentTarget.style.color = COLORS.text; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }} onMouseLeave={e => { e.currentTarget.style.color = COLORS.textMuted; e.currentTarget.style.background = "transparent"; }}>App</a>
-          <button style={{ background: "none", border: "none", color: COLORS.textMuted, fontSize: 14, cursor: "pointer", padding: "6px 12px", borderRadius: 6 }} onClick={() => onNavigate('auth')} onMouseEnter={e => { e.currentTarget.style.color = COLORS.text; e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }} onMouseLeave={e => { e.currentTarget.style.color = COLORS.textMuted; e.currentTarget.style.background = "transparent"; }}>Log in</button>
-        </div>
-      </nav>
+      <Header 
+        user={user} 
+        currentView="pricing" 
+        onNavigate={onNavigate} 
+        onSignIn={onSignIn} 
+        onSignOut={onSignOut} 
+      />
 
       <div className="relative z-10 px-5 md:px-6 py-12 md:py-20 pb-20 max-w-[1000px] mx-auto">
         

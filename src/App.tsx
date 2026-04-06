@@ -6,6 +6,7 @@ const LandingPage = lazy(() => import('./components/LandingPage'));
 const PricingPage = lazy(() => import('./components/PricingPage'));
 const ComingSoonPricing = lazy(() => import('./components/ComingSoonPricing'));
 const PrivacyPage = lazy(() => import('./components/PrivacyPage'));
+import Header from './components/Header';
 import { IconArrowRight, IconBolt, IconCheck, IconLock, IconTarget } from './components/ui-icons';
 import type { AppView } from './navigation';
 import { COLORS } from './theme';
@@ -475,7 +476,7 @@ export default function App() {
   }
 
   if (currentView === 'pricing') {
-    return <PricingPage onNavigate={setCurrentView} />;
+    return <PricingPage user={user} onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} onSignOut={() => supabase.auth.signOut()} />;
   }
 
   if (currentView === 'landing') {
@@ -483,11 +484,11 @@ export default function App() {
   }
 
   if (currentView === 'coming-soon-pricing') {
-    return <ComingSoonPricing onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} />;
+    return <ComingSoonPricing user={user} onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} onSignOut={() => supabase.auth.signOut()} />;
   }
 
   if (currentView === 'privacy') {
-    return <PrivacyPage onNavigate={setCurrentView} />;
+    return <PrivacyPage user={user} onNavigate={setCurrentView} onSignIn={handleGoogleSignIn} onSignOut={() => supabase.auth.signOut()} />;
   }
 
   return (
@@ -499,27 +500,13 @@ export default function App() {
         <div className="glow-orb" style={{ width: 320, height: 320, bottom: 80, right: "8%", background: "rgba(255, 255, 255, 0.04)" }} />
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <nav className="nav-container" style={{ borderBottom: `1px solid ${COLORS.borderSoft}`, backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", background: "rgba(9, 9, 11, 0.80)", position: "sticky", top: 0, zIndex: 100 }}>
-            <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={() => setCurrentView('landing')} role="presentation">
-                <img src={logoIcon} alt="SyncScript Logo" style={{ width: 28, height: 28 }} />
-                <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: 17, fontWeight: 700, letterSpacing: "-0.3px" }}>SyncScript</span>
-                <span style={{ fontSize: 10, fontWeight: 600, padding: "4px 8px", borderRadius: 6, background: COLORS.accentGlow, color: COLORS.accentDim, border: "1px solid rgba(255,255,255,0.15)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Beta</span>
-              </div>
-              <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: 24 }}>
-                <div className="nav-desktop-links" style={{ display: "flex", gap: 4 }}>
-                  <a className="nav-link" onClick={() => setCurrentView('landing')} style={{ cursor: "pointer" }}>How it works</a>
-                  <a className="nav-link" onClick={() => setCurrentView('landing')} style={{ cursor: "pointer" }}>Docs</a>
-                </div>
-
-                {user ? (
-                  <button className="generate-btn" style={{ padding: "7px 16px", fontSize: 14 }} onClick={() => supabase.auth.signOut()}>Sign out</button>
-                ) : (
-                  <button className="generate-btn" style={{ padding: "7px 16px", fontSize: 14 }} onClick={handleGoogleSignIn}>Sign in</button>
-                )}
-              </div>
-            </div>
-          </nav>
+          <Header 
+            user={user} 
+            currentView={currentView} 
+            onNavigate={setCurrentView} 
+            onSignIn={handleGoogleSignIn} 
+            onSignOut={() => supabase.auth.signOut()} 
+          />
 
           {/* HERO */}
           <div className="hero-container" style={{ textAlign: "center", padding: "120px 24px 48px", maxWidth: 780, margin: "0 auto" }}>

@@ -58,3 +58,12 @@ export function IconCheck({ size = 14, ...rest }: Props) {
     </svg>
   );
 }
+
+export function IconArrowLeft({ size = 16, ...rest }: Props) {
+  return (
+    <svg {...baseProps(size)} {...rest}>
+      <path d="M19 12H5" />
+      <path d="m12 19-7-7 7-7" />
+    </svg>
+  );
+}
