@@ -9,7 +9,7 @@ const ArrowIcon = () => (
   </svg>
 );
 
-type Props = { 
+type Props = {
   onNavigate: (view: AppView) => void;
   onSignIn: () => void;
 };
@@ -219,7 +219,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
                 <li>Priority AI processing</li>
                 <li>30-day history</li>
               </ul>
-              <button type="button" className="plan-cta plan-cta-accent" onClick={() => onNavigate('coming-soon-pricing')}>Start Pro - ₹499/mo</button>
+              <button type="button" className="plan-cta plan-cta-accent" onClick={() => onNavigate('coming-soon-pricing')}>Start Pro - ₹399/mo</button>
             </div>
 
             <div className="pricing-card">
@@ -244,7 +244,7 @@ export default function LandingPage({ onNavigate, onSignIn }: Props) {
         <div className="cta-glow" />
         <div className="cta-inner">
           <h2 className="cta-title">Your meetings deserve better notes.</h2>
-          <p className="cta-sub">Join 2,000+ teams already using SyncScript.</p>
+          <p className="cta-sub">Join teams already using SyncScript.</p>
           <div className="input-row">
             <input type="email" className="email-input" placeholder="you@company.com" aria-label="Work email" />
             <button type="button" className="btn-primary btn-lg" onClick={() => onNavigate('app')}>
