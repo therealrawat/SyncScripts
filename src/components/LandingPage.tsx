@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import logoIcon from '../assets/logo.svg';
 import type { AppView } from '../navigation';
 import Header from './Header';
+import Footer from './Footer';
 import '../landing.css';
 
 const ArrowIcon = () => (
@@ -344,28 +344,7 @@ export default function LandingPage({ user, onNavigate, onSignIn, onSignOut }: P
         </div>
       </section>
 
-      <footer>
-        <div className="footer-inner">
-          <div className="footer-top">
-            <div className="footer-brand">
-              <a href="/" className="nav-logo" style={{ textDecoration: 'none' }} onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-                <img src={logoIcon} alt="" width={28} height={28} />
-                SyncScripts
-              </a>
-              <p>AI-powered meeting intelligence for teams that value their time.</p>
-            </div>
-            <div className="footer-links-simple">
-              <a href="/" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>Home</a>
-              <a href="https://priyanshurawat.co.in" target="_blank" rel="noopener noreferrer">Founder</a>
-              <a onClick={() => onNavigate('privacy')} style={{ cursor: 'pointer' }}>Privacy</a>
-            </div>
-          </div>
-          <div className="footer-bottom">
-            <p>© 2026 SyncScripts. Priyanshu Rawat. All rights reserved.</p>
-            <p style={{ color: 'var(--text-3)' }}>syncscripts.netlify.app</p>
-          </div>
-        </div>
-      </footer>
+      <Footer onNavigate={onNavigate} variant="detailed" />
     </div>
   );
 }

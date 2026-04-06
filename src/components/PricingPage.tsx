@@ -3,6 +3,7 @@ import type { AppView } from '../navigation';
 import { supabase } from '../supabase';
 import { COLORS } from '../theme';
 import Header from './Header';
+import Footer from './Footer';
 
 const CheckIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0 mt-1">
@@ -199,6 +200,7 @@ export default function PricingPage({ user, onNavigate, onSignIn, onSignOut }: {
 
         </div>
       </div>
+      <Footer onNavigate={onNavigate} variant="detailed" />
     </div>
   );
 }

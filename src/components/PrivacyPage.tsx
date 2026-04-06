@@ -1,5 +1,6 @@
 import type { AppView } from '../navigation';
 import Header from './Header';
+import Footer from './Footer';
 
 const ShieldIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -714,9 +715,7 @@ export default function PrivacyPage({ user, onNavigate, onSignIn, onSignOut }: P
         </div>
       </div>
 
-      <footer>
-        <p>© 2026 SyncScript. . Priyanshu Rawat. All rights reserved.</p>
-      </footer>
+      <Footer onNavigate={onNavigate} variant="minimal" />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { AppView } from '../navigation';
 import logoIcon from '../assets/logo.svg';
 import Header from './Header';
+import Footer from './Footer';
 
 const ArrowIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: 'transform 0.15s' }}>
@@ -649,13 +650,7 @@ export default function ComingSoonPricing({ user, onNavigate, onSignIn, onSignOu
         </div>
       </main>
 
-      <footer>
-        <p>
-          <a onClick={() => onNavigate('landing')} style={{ cursor: 'pointer' }}>← Back to SyncScripts</a>
-          &nbsp;·&nbsp;
-          © 2026 SyncScripts. . Priyanshu Rawat. All rights reserved.
-        </p>
-      </footer>
+      <Footer onNavigate={onNavigate} variant="minimal" />
     </div>
   );
 }

@@ -7,6 +7,7 @@ const PricingPage = lazy(() => import('./components/PricingPage'));
 const ComingSoonPricing = lazy(() => import('./components/ComingSoonPricing'));
 const PrivacyPage = lazy(() => import('./components/PrivacyPage'));
 import Header from './components/Header';
+import Footer from './components/Footer';
 import { IconArrowRight, IconBolt, IconCheck, IconLock, IconTarget } from './components/ui-icons';
 import type { AppView } from './navigation';
 import { COLORS } from './theme';
@@ -673,14 +674,7 @@ export default function App() {
             </div>
           </div>
 
-          <footer className="footer-container" style={{ borderTop: `1px solid ${COLORS.borderSoft}`, padding: "32px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", maxWidth: 1100, margin: "0 auto" }}>
-            <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: 14, fontWeight: 700, color: COLORS.textMuted }}>SyncScripts</span>
-            <span style={{ fontSize: 12, color: COLORS.textDim }}>© 2026 Priyanshu Rawat</span>
-            <div className="nav-desktop-links" style={{ display: "flex", gap: 24 }}>
-              <a className="nav-link">Privacy</a>
-              <a className="nav-link">Terms</a>
-            </div>
-          </footer>
+          <Footer onNavigate={setCurrentView} variant="minimal" />
         </div>
       </div>
       {showSignInModal && <SignInModal onSignIn={handleGoogleSignIn} onClose={() => setShowSignInModal(false)} />}
