@@ -67,3 +67,34 @@ export function IconArrowLeft({ size = 16, ...rest }: Props) {
     </svg>
   );
 }
+
+export function IconSettings({ size = 16, ...rest }: Props) {
+  return (
+    <svg {...baseProps(size)} {...rest}>
+      <path d="M12.22 2h-.44a2 2 0 0 0-2 2 2 2 0 0 1-2 2 2 2 0 0 0-2 2 2 2 0 0 1-2 2 2 2 0 0 0-2 2v.44a2 2 0 0 0 2 2 2 2 0 0 1 2 2 2 2 0 0 0 2 2 2 2 0 0 1 2 2 2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2 2 2 0 0 1 2-2 2 2 0 0 0 2-2 2 2 0 0 1 2-2 2 2 0 0 0 2-2v-.44a2 2 0 0 0-2-2 2 2 0 0 1-2-2 2 2 0 0 0-2-2 2 2 0 0 1-2-2 2 2 0 0 0-2-2z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+export function IconFlask({ size = 16, ...rest }: Props) {
+  return (
+    <svg {...baseProps(size)} {...rest}>
+      <path d="M9 3h6" />
+      <path d="M10 3v6.341c0 .402-.148.788-.415 1.087L5.333 16c-.957 1.077-.19 2.75 1.25 2.75h10.834c1.44 0 2.207-1.673 1.25-2.75l-4.252-4.572a1.532 1.532 0 0 0-.415-1.087V3" />
+      <path d="M8.5 15h7" />
+    </svg>
+  );
+}
+
+export function IconFileText({ size = 16, ...rest }: Props) {
+  return (
+    <svg {...baseProps(size)} {...rest}>
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+      <polyline points="14 2 14 8 20 8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <line x1="10" y1="9" x2="8" y2="9" />
+    </svg>
+  );
+}

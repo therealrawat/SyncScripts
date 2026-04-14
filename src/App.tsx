@@ -13,7 +13,7 @@ import { IconArrowRight, IconBolt, IconCheck, IconLock, IconTarget } from './com
 import type { AppView } from './navigation';
 import { COLORS } from './theme';
 import logoIcon from './assets/logo.svg';
-import { supabase } from './supabase';
+import { supabase, REDIRECT_URL } from './supabase';
 
 // --- STYLES & GLOBALS ---
 
@@ -408,7 +408,7 @@ export default function App() {
       setShowSignInModal(true);
       return;
     }
-    
+
     // Strict Database Checking for Authenticated Users
     if (user && userPlan === 'free' && userUsage >= 3) {
       setCurrentView('pricing');
@@ -428,7 +428,7 @@ export default function App() {
       try {
         const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
         if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
-        
+
         const ai = new GoogleGenAI({ apiKey });
         const systemPrompt = `You are a Senior Product Manager processing transcripts. Return ONLY a raw JSON object string with no markdown backticks, representing actionable metrics.
         
@@ -444,25 +444,25 @@ export default function App() {
 }`;
 
         const prompt = `${systemPrompt}\n\nRaw Notes:\n${transcript}`;
-        
+
         const response = await ai.models.generateContent({
           model: "gemini-2.5-flash",
           contents: prompt,
         });
-        
+
         let jsonText = (response.text || '').trim();
-        
+
         // Robust JSON Extraction
         const startIndex = jsonText.indexOf('{');
         const endIndex = jsonText.lastIndexOf('}');
         if (startIndex !== -1 && endIndex !== -1) {
           jsonText = jsonText.substring(startIndex, endIndex + 1);
         }
-        
+
         const processedData = JSON.parse(jsonText);
         if (processedData.summary && Array.isArray(processedData.actions) && Array.isArray(processedData.tasks)) {
           setResult(processedData as MockResult);
-          
+
           if (user) {
             const newUsage = userUsage + 1;
             setUserUsage(newUsage);
@@ -472,7 +472,7 @@ export default function App() {
             setHits(newHits);
             localStorage.setItem('syncScriptsHits', newHits.toString());
           }
-          
+
           setTab("result");
           setResultTab("summary");
           setLoading(false);
@@ -482,15 +482,15 @@ export default function App() {
         }
       } catch (err: any) {
         console.error(`Attempt ${attempt + 1} failed:`, err);
-        
+
         const isRetriable = err.status === 503 || err.status === 429 || err.message?.includes("fetch");
-        
+
         if (isRetriable && attempt < maxRetries) {
           attempt++;
           const waitTime = Math.pow(2, attempt) * 1000;
-          toast.loading(`High demand. Retrying in ${waitTime/1000}s... (Attempt ${attempt}/${maxRetries})`, { 
-            id: 'retry-toast', 
-            className: 'premium-toast' 
+          toast.loading(`High demand. Retrying in ${waitTime / 1000}s... (Attempt ${attempt}/${maxRetries})`, {
+            id: 'retry-toast',
+            className: 'premium-toast'
           });
           await sleep(waitTime);
           continue;
@@ -508,7 +508,7 @@ export default function App() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin
+        redirectTo: REDIRECT_URL
       }
     });
     if (error) toast.error(error.message, { className: 'premium-toast' });

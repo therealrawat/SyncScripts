@@ -3,7 +3,7 @@ import { COLORS } from '../theme';
 import logoIcon from '../assets/logo.svg';
 import { IconBolt, IconLock, IconTarget } from './ui-icons';
 import type { AppView } from '../navigation';
-import { supabase } from '../supabase';
+import { supabase, REDIRECT_URL } from '../supabase';
 
 const AuthGoogleFonts = () => (
   <style>{`
@@ -49,7 +49,7 @@ export default function AuthPage({ }: { onNavigate?: (view: AppView) => void }) 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin // The auth listener in App.tsx will handle redirection
+        redirectTo: REDIRECT_URL // The auth listener in App.tsx will handle redirection
       }
     });
     if (error) setErrorMsg(error.message);
@@ -62,7 +62,7 @@ export default function AuthPage({ }: { onNavigate?: (view: AppView) => void }) 
         {/* Left Column - Login Form */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 sm:p-12 md:p-16 lg:px-24 border-r relative z-10" style={{ borderColor: COLORS.borderSoft, background: COLORS.surface }}>
           <div className="w-full max-w-[340px] flex flex-col items-center">
-            
+
             {/* SyncScripts Logo */}
             <div className="mb-10 flex items-center justify-center gap-2">
               <img src={logoIcon} alt="SyncScripts Logo" style={{ width: 32, height: 32 }} />
@@ -93,23 +93,23 @@ export default function AuthPage({ }: { onNavigate?: (view: AppView) => void }) 
           <div className="noise-auth" />
           <div className="glow-orb-auth" style={{ width: 600, height: 600, top: -200, right: -100, background: "rgba(255, 255, 255, 0.06)" }} />
           <div className="glow-orb-auth" style={{ width: 500, height: 500, bottom: -100, left: -200, background: "rgba(255, 255, 255, 0.04)" }} />
-          
+
           <div className="relative z-10 max-w-md ml-auto mr-auto lg:ml-0 space-y-12 pl-4 lg:pl-16">
-            <FeatureItem 
+            <FeatureItem
               icon={<IconBolt size={22} style={{ color: COLORS.text }} />}
               title="Instant processing"
               description="Turn hours of meeting transcripts into structured actionable insights in just seconds using AI."
               titleColor={COLORS.text}
             />
-            
-            <FeatureItem 
+
+            <FeatureItem
               icon={<IconTarget size={22} style={{ color: COLORS.textMuted }} />}
               title="JIRA-ready actions"
               description="Extract beautifully formatted engineering tasks, tracked bug reports, and clear to-do lists seamlessly."
               titleColor={COLORS.textMuted}
             />
-            
-            <FeatureItem 
+
+            <FeatureItem
               icon={<IconLock size={22} style={{ color: COLORS.accentDim }} />}
               title="Secure & Private"
               description="We respect your data. Your internal discussions remain totally confidential and are never persisted."
