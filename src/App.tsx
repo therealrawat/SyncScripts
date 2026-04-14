@@ -350,6 +350,7 @@ export default function App() {
   const [copied, setCopied] = useState(false);
   const [charCount, setCharCount] = useState(0);
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [lastActionTime, setLastActionTime] = useState(0);
 
   // User hits tracking logic
   const [currentView, setCurrentView] = useState<AppView>('landing');
@@ -395,6 +396,14 @@ export default function App() {
   useEffect(() => { setCharCount(transcript.length); }, [transcript]);
 
   const handleGenerate = async () => {
+    // Technical Rate Limiting (5s cooldown)
+    const now = Date.now();
+    if (now - lastActionTime < 5000) {
+      toast.error("Please wait a few seconds before generating again.", { className: 'premium-toast' });
+      return;
+    }
+    setLastActionTime(now);
+
     if (!user && hits >= 2) {
       setShowSignInModal(true);
       return;

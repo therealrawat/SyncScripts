@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import hpp from 'hpp';
+import { rateLimit } from 'express-rate-limit';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
@@ -8,8 +11,59 @@ import { createClient } from '@supabase/supabase-js';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// 1. Security Headers (Helmet)
+app.use(helmet());
+
+// 2. HTTP Parameter Pollution Protection
+app.use(hpp());
+
+// 3. Refined CORS (Restrict to trusted origins)
+const allowedOrigins = [
+  'http://localhost:5173', // Vite default dev port
+  'http://127.0.0.1:5173',
+  process.env.FRONTEND_URL // Future production URL from .env
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
+
 app.use(express.json());
+
+// 4. Tiered Rate Limiting
+// General API Limiter (100 reqs / 15 mins)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+// Stricter Payment Verification Limiter (5 reqs / 15 mins)
+// Prevents brute-forcing payment signatures
+const paymentVerifyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error: 'Security alert: Too many payment verification attempts. Please contact support.' }
+});
+
+// Apply General Limiter to all /api/ routes
+app.use('/api/', apiLimiter);
+
+// Apply Stricter Limiter specifically to payment verification
+app.use('/api/verify-payment', paymentVerifyLimiter);
 
 // Initialize Supabase Admin Client using Service Role Key
 const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
