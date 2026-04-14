@@ -1,7 +1,7 @@
 import React from 'react';
 import type { AppView } from '../navigation';
 import logoIcon from '../assets/logo.svg';
-import { IconArrowRight, IconArrowLeft, IconSettings, IconFlask, IconFileText } from './ui-icons';
+import { IconArrowRight, IconArrowLeft } from './ui-icons';
 import { useState, useEffect, useRef } from 'react';
 import '../header.css';
 
