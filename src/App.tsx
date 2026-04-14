@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { GoogleGenAI } from '@google/genai';
 
 const AuthPage = lazy(() => import('./components/AuthPage'));
@@ -224,6 +225,18 @@ const GoogleFonts = () => (
       letter-spacing: 0.15em; cursor: pointer; transition: color 0.2s;
     }
     .maybe-later:hover { color: rgba(255,255,255,0.6); }
+
+    /* Toast Styles */
+    .premium-toast {
+      background: #111113 !important;
+      color: #FAFAFA !important;
+      border: 1px solid #27272A !important;
+      border-radius: 12px !important;
+      font-family: 'Figtree', sans-serif !important;
+      font-size: 14px !important;
+      padding: 12px 16px !important;
+      box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.5) !important;
+    }
   `}</style>
 );
 
@@ -448,7 +461,7 @@ export default function App() {
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to process with live API. Please try again.");
+      toast.error("Failed to process with live API. Please try again.", { className: 'premium-toast' });
     } finally {
       setLoading(false);
     }
@@ -461,7 +474,7 @@ export default function App() {
         redirectTo: window.location.origin
       }
     });
-    if (error) alert(error.message);
+    if (error) toast.error(error.message, { className: 'premium-toast' });
   };
   
   const handleCopy = (text: string) => {
@@ -678,6 +691,7 @@ export default function App() {
         </div>
       </div>
       {showSignInModal && <SignInModal onSignIn={handleGoogleSignIn} onClose={() => setShowSignInModal(false)} />}
+      <Toaster position="bottom-right" toastOptions={{ duration: 4000 }} />
     </Suspense>
   );
 }

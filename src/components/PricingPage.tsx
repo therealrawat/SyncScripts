@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import type { AppView } from '../navigation';
 import { supabase } from '../supabase';
 import { COLORS } from '../theme';
@@ -34,7 +35,7 @@ export default function PricingPage({ user, onNavigate, onSignIn, onSignOut }: {
       setLoadingPlan(plan);
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        alert("Please log in first before upgrading!");
+        toast.error("Please log in first before upgrading!", { className: 'premium-toast' });
         onNavigate('auth');
         return;
       }
@@ -75,13 +76,13 @@ export default function PricingPage({ user, onNavigate, onSignIn, onSignOut }: {
             });
             const verifyData = await verifyRes.json();
             if (verifyData.success) {
-              alert("Payment successful! Database Limits unlocked.");
+              toast.success("Payment successful! Database Limits unlocked.", { className: 'premium-toast' });
               onNavigate('app');
             } else {
-              alert("Verification failed: " + verifyData.message);
+              toast.error("Verification failed: " + verifyData.message, { className: 'premium-toast' });
             }
           } catch (e) {
-            alert("Payment verification error.");
+            toast.error("Payment verification error.", { className: 'premium-toast' });
           }
         },
         theme: {
@@ -94,7 +95,7 @@ export default function PricingPage({ user, onNavigate, onSignIn, onSignOut }: {
 
     } catch (error: any) {
       console.error(error);
-      alert(error.message || "Failed to initiate payment");
+      toast.error(error.message || "Failed to initiate payment", { className: 'premium-toast' });
     } finally {
       setLoadingPlan(null);
     }
