@@ -276,7 +276,7 @@ const SkeletonView = ({ type }: { type: string }) => {
       </div>
     );
   }
-  
+
   if (type === "actions") {
     return (
       <div className="fade-up result-card" style={{ padding: "0 20px" }}>
@@ -411,13 +411,18 @@ export default function App() {
     setTab("result");
     setResultTab("summary");
 
-    try {
-      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-      if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
-      
-      const ai = new GoogleGenAI({ apiKey });
-      const systemPrompt = `You are a Senior Product Manager processing transcripts. Return ONLY a raw JSON object string with no markdown backticks, representing actionable metrics.
-      
+    const maxRetries = 3;
+    let attempt = 0;
+    const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+    while (attempt <= maxRetries) {
+      try {
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        if (!apiKey) throw new Error("Missing VITE_GEMINI_API_KEY in .env");
+        
+        const ai = new GoogleGenAI({ apiKey });
+        const systemPrompt = `You are a Senior Product Manager processing transcripts. Return ONLY a raw JSON object string with no markdown backticks, representing actionable metrics.
+        
 ### SCHEMA:
 {
   "summary": "High-level goal and decisions (max 60 words).",
@@ -429,42 +434,65 @@ export default function App() {
   ]
 }`;
 
-      const prompt = `${systemPrompt}\n\nRaw Notes:\n${transcript}`;
-      
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: prompt,
-      });
-      
-      let jsonText = (response.text || '').trim();
-      if (jsonText.startsWith('```json')) jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-      else if (jsonText.startsWith('```')) jsonText = jsonText.replace(/```\n?/g, '');
-      
-      const processedData = JSON.parse(jsonText);
-      if (processedData.summary && Array.isArray(processedData.actions) && Array.isArray(processedData.tasks)) {
-        setResult(processedData as MockResult);
+        const prompt = `${systemPrompt}\n\nRaw Notes:\n${transcript}`;
         
-        if (user) {
-          const newUsage = userUsage + 1;
-          setUserUsage(newUsage);
-          await supabase.from('usage').update({ generations_count: newUsage }).eq('user_id', user.id);
-        } else {
-          const newHits = hits + 1;
-          setHits(newHits);
-          localStorage.setItem('syncScriptsHits', newHits.toString());
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: prompt,
+        });
+        
+        let jsonText = (response.text || '').trim();
+        
+        // Robust JSON Extraction
+        const startIndex = jsonText.indexOf('{');
+        const endIndex = jsonText.lastIndexOf('}');
+        if (startIndex !== -1 && endIndex !== -1) {
+          jsonText = jsonText.substring(startIndex, endIndex + 1);
         }
         
-        setTab("result");
-        setResultTab("summary");
-      } else {
-        throw new Error("Invalid schema returned.");
+        const processedData = JSON.parse(jsonText);
+        if (processedData.summary && Array.isArray(processedData.actions) && Array.isArray(processedData.tasks)) {
+          setResult(processedData as MockResult);
+          
+          if (user) {
+            const newUsage = userUsage + 1;
+            setUserUsage(newUsage);
+            await supabase.from('usage').update({ generations_count: newUsage }).eq('user_id', user.id);
+          } else {
+            const newHits = hits + 1;
+            setHits(newHits);
+            localStorage.setItem('syncScriptsHits', newHits.toString());
+          }
+          
+          setTab("result");
+          setResultTab("summary");
+          setLoading(false);
+          return; // Success!
+        } else {
+          throw new Error("Invalid schema returned.");
+        }
+      } catch (err: any) {
+        console.error(`Attempt ${attempt + 1} failed:`, err);
+        
+        const isRetriable = err.status === 503 || err.status === 429 || err.message?.includes("fetch");
+        
+        if (isRetriable && attempt < maxRetries) {
+          attempt++;
+          const waitTime = Math.pow(2, attempt) * 1000;
+          toast.loading(`High demand. Retrying in ${waitTime/1000}s... (Attempt ${attempt}/${maxRetries})`, { 
+            id: 'retry-toast', 
+            className: 'premium-toast' 
+          });
+          await sleep(waitTime);
+          continue;
+        }
+
+        const msg = err.message || "API processing failed.";
+        toast.error(`Error: ${msg}`, { id: 'retry-toast', className: 'premium-toast' });
+        break;
       }
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to process with live API. Please try again.", { className: 'premium-toast' });
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleGoogleSignIn = async () => {
@@ -476,7 +504,7 @@ export default function App() {
     });
     if (error) toast.error(error.message, { className: 'premium-toast' });
   };
-  
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -514,12 +542,12 @@ export default function App() {
         <div className="glow-orb" style={{ width: 320, height: 320, bottom: 80, right: "8%", background: "rgba(255, 255, 255, 0.04)" }} />
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <Header 
-            user={user} 
-            currentView={currentView} 
-            onNavigate={setCurrentView} 
-            onSignIn={handleGoogleSignIn} 
-            onSignOut={() => supabase.auth.signOut()} 
+          <Header
+            user={user}
+            currentView={currentView}
+            onNavigate={setCurrentView}
+            onSignIn={handleGoogleSignIn}
+            onSignOut={() => supabase.auth.signOut()}
           />
 
           {/* HERO */}
@@ -651,7 +679,7 @@ export default function App() {
                               return (
                                 <div key={a.id} className="action-item">
                                   <div className={`action-check ${checked[a.id] ? "checked" : ""}`} onClick={() => toggleCheck(a.id)}>
-                                    {checked[a.id] && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                                    {checked[a.id] && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l2.5 2.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                                   </div>
                                   <div style={{ flex: 1 }}>
                                     <p style={{ fontSize: 13, lineHeight: 1.6, color: checked[a.id] ? COLORS.textDim : COLORS.text, textDecoration: checked[a.id] ? "line-through" : "none", marginBottom: 6 }}>{a.text}</p>
